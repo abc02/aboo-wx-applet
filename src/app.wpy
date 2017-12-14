@@ -21,7 +21,17 @@
       }
     }
     globalData = {
-      userInfo: null
+      userInfo: {
+        BindingNum: 2,
+        Ciphertext: 'ea49f27f29b743bc4dff24c02a0297fc',
+        Icon: 'https://abuimg.0577xiedu.net/abupaopao/icon/11.png?18',
+        JwtToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIxMSIsImV4cCI6MTUxNDk2NTkxOH0.cP2PY9oNwQJKg81f70Fcb8IMwfCRQpPjE4-LfVAgfsI',
+        NickName: '防打扰',
+        UserId: 11,
+        code: '登录成功',
+        ret: 1001
+      },
+      locationInfo: null
     }
     constructor() {
       super()
@@ -42,13 +52,22 @@
       const data = await this.sleep(3)
       console.log(data)
     }
-    getUserInfo(cb) {
+    // 获取用户信息
+    GetUserInfo() {
       if (this.globalData.userInfo) {
         return this.globalData.userInfo
       }
       wepy.redirectTo({
         url: '../login/PhoneLoginAccount'
       })
+    }
+    // 获取用户位置
+    async GetLocationInfo(type = 'wgs84') {
+      if (this.globalData.locationInfo) {
+        return this.globalData.locationInfo
+      }
+      // 授权获取位置
+      return await wepy.getLocation({type})
     }
   }
 </script>
