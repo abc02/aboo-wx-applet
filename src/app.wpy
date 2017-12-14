@@ -1,0 +1,54 @@
+<style lang="scss">
+  @import "./styles/base";
+  @import "./styles/weui-extend";
+</style>
+
+<script>
+  import wepy from 'wepy'
+  import 'wepy-async-function'
+  export default class extends wepy.app {
+    config = {
+      pages: [
+        'pages/index/index',
+        'pages/login/PhoneLoginAccount',
+        'pages/login/PhonePasswordGet',
+        'pages/login/PhoneRegisterAccount'
+      ],
+      window: {
+        backgroundTextStyle: 'light',
+        navigationBarBackgroundColor: '#f6655e',
+        navigationBarTextStyle: 'white'
+      }
+    }
+    globalData = {
+      userInfo: null
+    }
+    constructor() {
+      super()
+      this.use('requestfix')
+      this.use('promisify')
+    }
+    onLaunch() {
+      this.testAsync()
+    }
+    sleep(s) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('promise resolved')
+        }, s * 1000)
+      })
+    }
+    async testAsync() {
+      const data = await this.sleep(3)
+      console.log(data)
+    }
+    getUserInfo(cb) {
+      if (this.globalData.userInfo) {
+        return this.globalData.userInfo
+      }
+      wepy.redirectTo({
+        url: '../login/PhoneLoginAccount'
+      })
+    }
+  }
+</script>

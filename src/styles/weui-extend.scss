@@ -1,0 +1,35 @@
+@import "weui.wxss";
+@import "variable";
+//******weui fix******/
+.form {
+    .weui-vcode-btn {
+        color: $color-primary;
+    }
+    .muted {
+        color: $color-muted;
+    }
+    .weui-cell::before {
+        border-top: none;
+        border-bottom: $border;
+    }
+}
+
+.weui-cells__login__title {
+    @extend .weui-cells__title;
+    font-size: $text-xxl;
+    color: $color-normal;
+}
+
+.weui-cells__login {
+    @extend .weui-cells;
+    &::after {
+        border-bottom: none;
+    }
+    &::before {
+        border-top: none;
+    }
+}
+.weui-footer__login__link{
+    @extend .weui-footer__link;
+    color:  $color-primary;
+}

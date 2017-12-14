@@ -1,0 +1,84 @@
+<template>
+  <view class='mt20 mb20 ml20 mr20'>
+    <panel>
+      <view class="weui-cells__login__title" slot="title">新用户注册</view>
+      <view class="weui-cells__login weui-cells_after-title form ">
+        <blcok wx:for="{{list}}" wx:key="index" wx:index="index" wx:item="item">
+          <view class="mt20 weui-cell weui-cell_input {{item.vsCode ?  'weui-cell_vcode' : ''}}">
+            <view class="weui-cell__bd">
+              <input 
+              class="weui-input" 
+              id="{{item.id}}" 
+              name="{{item.id}}" 
+              type="{{item.type}}" 
+              maxlength="{{item.maxlength}}"
+              password="{{item.isPassword}}" 
+              focus="{{item.isFocus}}" 
+              placeholder="{{item.placeholder}}"
+              @input="onInput"
+              />
+            </view>
+            <view wx-if="{{item.vsCode}}" class="weui-cell__ft">
+              <view class="weui-vcode-btn {{isWaiting ? 'muted' : ''}}" @tap="onCodeTap('2')">{{btnText}}</view>
+            </view>
+          </view>
+        </blcok>
+        <button 
+        class="mt20" 
+        type="primary" 
+        disabled="{{isDisabled}}"
+        @tap="PhoneRegisterAccount({{input}})"
+        >注册</button>
+      </view>
+    </panel>
+  </view>
+</template>
+
+<script>
+  import Wepy from 'wepy'
+  import Base from 'mixins/base'
+  import Input from 'mixins/input'
+  import VCode from 'mixins/vcode'
+  import Login from 'mixins/login'
+  import Panel from 'components/panel'
+  export default class PhoneLoginAccount extends Wepy.page {
+    mixins = [Base, Input, VCode, Login]
+    config = {
+      navigationBarTitleText: '注册'
+    }
+    conponents = {
+      panel: Panel
+    }
+    data = {
+      list: [
+        {
+          id: 'phone',
+          type: 'number',
+          maxlength: 11,
+          isPassword: false,
+          isFocus: true,
+          placeholder: '请输入常用手机号码',
+          vsCode: false
+        },
+        {
+          id: 'code',
+          type: 'text',
+          maxlength: 6,
+          isPassword: false,
+          isFocus: false,
+          placeholder: '请输入短信验证码',
+          vsCode: true
+        },
+        {
+          id: 'password',
+          type: 'text',
+          maxlength: 12,
+          isPassword: true,
+          isFocus: false,
+          placeholder: '设置6-12位字母、数字密码',
+          vsCode: false
+        }
+      ]
+    }
+  }
+</script>

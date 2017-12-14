@@ -1,0 +1,80 @@
+<template>
+  <view class='mt20 mb20 ml20 mr20'>
+    <panel>
+      <view class="weui-cells__login__title" slot="title">登录</view>
+      <view class="weui-cells__login weui-cells_after-title form ">
+        <blcok wx:for="{{list}}" wx:key="index" wx:index="index" wx:item="item">
+          <view class="mt20 weui-cell weui-cell_input {{item.vsCode ?  'weui-cell_vcode' : ''}}">
+            <view class="weui-cell__bd">
+              <input 
+              class="weui-input" 
+              id="{{item.id}}" 
+              name="{{item.id}}" 
+              type="{{item.type}}" 
+              maxlength="{{item.maxlength}}"
+              password="{{item.isPassword}}" 
+              focus="{{item.isFocus}}" 
+              placeholder="{{item.placeholder}}"
+              @input="onInput"
+              />
+            </view>
+            <view wx-if="{{item.vsCode}}" class="weui-cell__ft">
+              <navigator url="./PhonePasswordGet" class="weui-vcode-btn">{{item.vsCodeText}}</navigator>
+            </view>
+          </view>
+        </blcok>
+        <button 
+        class="mt20" 
+        type="primary" 
+        disabled="{{isDisabled}}"
+        @tap="PhoneLoginAccount({{input}})"
+        >登录</button>
+      </view>
+    </panel>
+    <view class="weui-footer weui-footer_fixed-bottom mb20">
+      <view class="weui-footer__links">
+        <navigator url="./PhoneRegisterAccount" class="weui-footer__login__link">注册新用户</navigator>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import Wepy from 'wepy'
+  import Base from 'mixins/base'
+  import Input from 'mixins/input'
+  import Login from 'mixins/login'
+  import Panel from 'components/panel'
+  export default class PhoneLoginAccount extends Wepy.page {
+    mixins = [Base, Input, Login]
+    config = {
+      navigationBarTitleText: '登录'
+    }
+    conponents = {
+      panel: Panel
+    }
+    data = {
+      list: [
+        {
+          id: 'phone',
+          type: 'number',
+          maxlength: 11,
+          isPassword: false,
+          isFocus: true,
+          placeholder: '请输入已验证手机号码',
+          vsCode: false
+        },
+        {
+          id: 'password',
+          type: 'text',
+          maxlength: 12,
+          isPassword: true,
+          isFocus: false,
+          placeholder: '请输入密码',
+          vsCode: true,
+          vsCodeText: '忘记密码?'
+        }
+      ]
+    }
+  }
+</script>
