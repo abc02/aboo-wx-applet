@@ -119,6 +119,8 @@ view.bg-white{background-color: white}
 .fixed-bottom{
   position: fixed;
   bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 
@@ -139,6 +141,12 @@ view.bg-white{background-color: white}
 }
 .icon-xxl{
   @include icon-image(60px);
+}
+.icon-big{
+  @include icon-image(200rpx);
+}
+.icon-small{
+  @include icon-image(120rpx);
 }
 
 //******间隔******/

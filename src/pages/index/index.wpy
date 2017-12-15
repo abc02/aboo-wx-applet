@@ -1,32 +1,194 @@
+<style lang="scss">
+.fixed-top{
+  position: top;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.fixed-bottom{
+  @extend .fixed-bottom;
+  bottom: 20rpx;
+}
+.fixed-right{
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 20rpx;
+}
+</style>
+
 <template>
   <view style="height:100%;">
     <map 
-    id="myMap" 
-    style="width:100%; height:100%;" 
-    show- location 
-    latitude="{{locationInfo.latitude}}" 
-    longitude="{{locationInfo.longitude}}" 
-    markers="{{markers}}">
+      id="myMap"
+      style="width:100%; height:100%;"
+      show-location
+      scale="{{scale}}"
+      latitude="{{currentLocationInfo.latitude}}" 
+      longitude="{{currentLocationInfo.longitude}}" 
+      controls="{{controls}}"
+      markers="{{markers}}" >
+      <cover-view class="controls row-around fixed-bottom">
+        <cover-image 
+          class="icon-small"  
+          src="./assets/moveToLocation.png"
+          @tap="moveToLocation"
+        />
+        <cover-image 
+          class="icon-big" 
+          src="./assets/getLastPosition.png"
+          @tap="getLastPosition"
+        />
+        <cover-image 
+          class="icon-small" 
+          src="./assets/my_fill_light.png"
+          @tap="toGetMeInfo"
+        />
+      </cover-view>
+      <cover-view class="controls column-center fixed-right">
+        <cover-image 
+          class="icon-small"  
+          src="./assets/add.png"
+          @tap="add"
+        />
+        <cover-image 
+          class="icon-small" 
+          src="./assets/reduce.png"
+          @tap="reduce"
+        />
+      </cover-view>
     </map>
   </view>
 </template>
 
 <script>
   import Wepy from 'wepy'
+  import { stringToBytes, UTF8 } from 'convert-string'
   import Base from 'mixins/base'
-  import Map from 'mixins/map'
-  import User from 'mixins/user'
-  import Panel from 'components/panel'
+  import FixingService from 'services/fixingService'
   export default class Index extends Wepy.page {
-    mixins = [Base, Map, User]
+    mixins = [Base]
     config = {
       navigationBarTitleText: '阿布跑跑'
     }
-    components = {
-      panel: Panel
-    }
     data = {
+      scale: 14, // 默认 16
+      markers: null,
+      locationInfo: null,
+      userInfo: null,
       fixingsInfo: null
+    }
+    computed = {
+      // 当前地图经纬度点，默认定位到北京
+      currentLocationInfo() {
+        if (!this.locationInfo) {
+          return {
+            latitude: '39.910119',
+            longitude: '116.397983'
+          }
+        }
+        return this.locationInfo
+      },
+      // 当前默认
+      isDefaultFixingInfo() {
+        if (this.fixingsInfo && this.fixingsInfo.length > 0) {
+          for (let i = 0; i < this.fixingsInfo.length; i++) {
+            if (Number.parseInt(this.fixingsInfo[i].isDefault) === 1) {
+              return this.fixingsInfo[i]
+            }
+          }
+        }
+        return null
+      }
+    }
+    watch = {
+      isDefaultFixingInfo(oldDefault, newDefault) {
+        console.log(oldDefault,newDefault)
+        var socketMsgQueue = {}
+          socketMsgQueue.PacketType = UTF8.stringToBytes('1')
+          socketMsgQueue.PacketContent = [UTF8.stringToBytes(oldDefault.fixingId), UTF8.stringToBytes(Date.now().toString())]
+        console.log(socketMsgQueue)
+      }
+    }
+    methods = {
+      // 将地图中心移动到当前定位点，需要配合map组件的show-location使用
+      moveToLocation() {
+        this.mapCtx.moveToLocation()
+      },
+      getLastPosition() {
+        console.log('getLastPosition')
+      },
+      toGetMeInfo() {
+        Wepy.navigateTo({
+          url: '../user/GetMeInfo'
+        })
+      },
+      add() {
+        if (this.scale === 18) return null
+        this.scale = this.scale + 1
+      },
+      reduce() {
+        if (this.scale === 5) return null
+        this.scale = this.scale - 1
+      }
+    }
+    JoinFixingRequest(fixing, key) {
+      let userInfo = Wepy.$instance.GetUserInfo()
+      let data = {}
+      data.userId = userInfo.UserId
+      if (fixing) {
+        data.fixingId = fixing.fixingId
+      }
+      if (key) {
+        data[key] = fixing[key]
+      }
+      return data
+    }
+    // 获取用户绑定信息
+    async GetBindinginfo() {
+      let data = this.JoinFixingRequest()
+      return await FixingService.GetBindinginfo(data)
+    }
+    async onLoad() {
+      // 授权获取用户数据
+      this.userInfo = this.$parent.GetUserInfo()
+      // 授权获取用户位置，否则默认定位北京
+      this.locationInfo = await this.$parent.GetLocationInfo()
+      this.$apply()
+    }
+    onReady() {
+      // 定义myMap上下文
+      this.mapCtx = Wepy.createMapContext('myMap')
+    }
+    async onShow() {
+      // 存在用户数据，获取用户绑定设备数据
+      if (this.userInfo) {
+        let res = await this.GetBindinginfo()
+        this.fixingsInfo = res.data
+      }
+      // var socketOpen = false
+      // var socketMsgQueue = {}
+      // Wepy.connectSocket({
+      //   url: 'wss://smallprogram.0577xiedu.net'
+      // })
+
+      // Wepy.onSocketOpen(function(res) {
+      //   socketOpen = true
+      //   socketMsgQueue.PacketType = UTF8.stringToBytes('1')
+      //   socketMsgQueue.PacketContent = [UTF8.stringToBytes(this.isDefaultFixingInfo.fixingId), UTF8.stringToBytes(Date.now().toString())]
+      //   console.log(socketMsgQueue)
+      //   // socketMsgQueue = {}
+      // })
+      // console.log()
+      // function sendSocketMessage(msg) {
+      //   if (socketOpen) {
+      //     Wepy.sendSocketMessage({
+      //       data:msg
+      //     })
+      //   } else {
+      //     socketMsgQueue.push(msg)
+      //   }
+      // }
     }
   }
 </script>

@@ -9,10 +9,11 @@
   export default class extends wepy.app {
     config = {
       pages: [
-        'pages/index/index',
+        'pages/index/Index',
         'pages/login/PhoneLoginAccount',
         'pages/login/PhonePasswordGet',
-        'pages/login/PhoneRegisterAccount'
+        'pages/login/PhoneRegisterAccount',
+        'pages/user/GetMeInfo'
       ],
       window: {
         backgroundTextStyle: 'light',
@@ -37,20 +38,6 @@
       super()
       this.use('requestfix')
       this.use('promisify')
-    }
-    onLaunch() {
-      this.testAsync()
-    }
-    sleep(s) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve('promise resolved')
-        }, s * 1000)
-      })
-    }
-    async testAsync() {
-      const data = await this.sleep(3)
-      console.log(data)
     }
     // 获取用户信息
     GetUserInfo() {

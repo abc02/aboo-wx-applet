@@ -1,0 +1,59 @@
+<template>
+  <view class='mt20 mb20 ml20 mr20'>
+    <view class="weui-cells weui-cells_after-title">
+      <navigator 
+        class="weui-cell weui-cell_access" 
+        hover-class="weui-cell_active"
+        wx:for="{{list}}" 
+        wx:key="index" 
+        wx:for-index="index" 
+        wx:for-item="item" 
+        url="{{item.url}}">
+        <view
+          wx:if="{{item.icon}}" 
+          class="weui-cell__hd">
+          <image 
+            src="{{item.iconPath}}" 
+            style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;" />
+        </view>
+        <view class="weui-cell__bd">{{item.text}}</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+    </view>
+  </view>
+</template>
+
+<script>
+  import Wepy from 'wepy'
+  import Base from 'mixins/base'
+  export default class GetMeInfo extends Wepy.page {
+    mixins = [Base]
+    config = {
+      navigationBarTitleText: '个人信息'
+    }
+    data = {
+      list: [
+        {
+          text: '我的设备',
+          url: '',
+          icon: false,
+          iconPath: ''
+        },
+        {
+          text: '功能介绍',
+          url: '',
+          icon: false,
+          iconPath: ''
+        },
+        {
+          text: '常见问题',
+          url: '',
+          icon: false,
+          iconPath: ''
+        }
+      ]
+    }
+    onLoad() {
+    }
+  }
+</script>

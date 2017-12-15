@@ -1,11 +1,37 @@
 import Wepy from 'wepy'
 export default class Map extends Wepy.mixin {
   data = {
-    scale: '14', // 默认 16
+    scale: 14, // 默认 16
     markers: null,
-    locationInfo: {
-      latitude: '39.910119',
-      longitude: '116.397983'
+    locationInfo: null
+  }
+  computed = {
+    currentLocationInfo() {
+      // 默认值空的时，定位到北京
+      if (!this.locationInfo) {
+        return {
+          latitude: '39.910119',
+          longitude: '116.397983'
+        }
+      }
+      console.log(this.locationInfo)
+      return this.locationInfo
+    }
+  }
+  methods = {
+    // 将地图中心移动到当前定位点，需要配合map组件的show-location使用
+    moveToLocation() {
+      this.mapCtx.moveToLocation()
+    },
+    add() {
+      if (this.scale === 18) return null
+      this.scale = this.scale + 1
+      this.num = this.num + 1
+    },
+    reduce() {
+      if (this.scale === 5) return null
+      this.scale = this.scale - 1
+      this.num = this.num - 1
     }
   }
   async onLoad() {
@@ -14,42 +40,5 @@ export default class Map extends Wepy.mixin {
   }
   onReady() {
     this.mapCtx = Wepy.createMapContext('myMap')
-  }
-  methods = {
-    getCenterLocation() {
-      this.mapCtx.getCenterLocation().then(res => {
-        console.log(res)
-      })
-    },
-    // 将地图中心移动到当前定位点，需要配合map组件的show-location使用
-    moveToLocation() {
-      this.mapCtx.moveToLocation()
-    },
-    translateMarker() {
-      this.mapCtx.translateMarker({
-        markerId: 0,
-        autoRotate: true,
-        duration: 1000,
-        destination: {
-          latitude: 23.10229,
-          longitude: 113.3345211
-        },
-        animationEnd() {
-          console.log('animation end')
-        }
-      })
-    },
-    includePoints() {
-      this.mapCtx.includePoints({
-        padding: [10],
-        points: [{
-          latitude: 23.10229,
-          longitude: 113.3345211
-        }, {
-          latitude: 23.00229,
-          longitude: 113.3345211
-        }]
-      })
-    }
   }
 }
