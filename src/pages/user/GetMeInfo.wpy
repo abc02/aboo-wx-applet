@@ -1,24 +1,39 @@
+<style lang="scss">
+.user-info{
+  image{
+    border-radius: 50%;
+    overflow: hidden;
+  }
+}
+</style>
+
 <template>
-  <view class='mt20 mb20 ml20 mr20'>
-    <view class="weui-cells weui-cells_after-title">
-      <navigator 
-        class="weui-cell weui-cell_access" 
-        hover-class="weui-cell_active"
-        wx:for="{{list}}" 
-        wx:key="index" 
-        wx:for-index="index" 
-        wx:for-item="item" 
-        url="{{item.url}}">
-        <view
-          wx:if="{{item.icon}}" 
-          class="weui-cell__hd">
-          <image 
-            src="{{item.iconPath}}" 
-            style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;" />
-        </view>
-        <view class="weui-cell__bd">{{item.text}}</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
-      </navigator>
+  <view class='column mt20 mb20 ml20 mr20' style="height:100%">
+    <view>
+      <view class="user-info column-center mb20">
+        <image class="icon-big mb20" src="{{userInfo.Icon}}" />
+        <text class="xxl">{{userInfo.NickName}}</text>
+      </view>
+      <view class="weui-cells weui-cells_after-title">
+        <navigator 
+          class="weui-cell weui-cell_access" 
+          hover-class="weui-cell_active"
+          wx:for="{{list}}" 
+          wx:key="index" 
+          wx:for-index="index" 
+          wx:for-item="item" 
+          url="{{item.url}}">
+          <view
+            wx:if="{{item.icon}}" 
+            class="weui-cell__hd">
+            <image 
+              src="{{item.iconPath}}" 
+              style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;" />
+          </view>
+          <view class="weui-cell__bd">{{item.text}}</view>
+          <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+        </navigator>
+      </view>
     </view>
   </view>
 </template>
@@ -35,7 +50,7 @@
       list: [
         {
           text: '我的设备',
-          url: '',
+          url: '../fixing/GetBindinginfo',
           icon: false,
           iconPath: ''
         },
@@ -51,9 +66,13 @@
           icon: false,
           iconPath: ''
         }
-      ]
+      ],
+      userInfo: {
+        NickName: '加载中'
+      }
     }
     onLoad() {
+      this.userInfo = this.$parent.GetUserInfo()
     }
   }
 </script>

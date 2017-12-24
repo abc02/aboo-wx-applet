@@ -1,0 +1,41 @@
+<template>
+  <view>
+    <view class="weui-cells weui-cells_after-title">
+      <view 
+        class="weui-cell weui-cell_access" 
+        hover-class="weui-cell_active"
+        wx:for="{{fixingsInfo}}" 
+        wx:key="index" 
+        wx:for-index="index" 
+        wx:for-item="item" 
+        >
+        <view
+          wx:if="{{item.fixingIcon}}" 
+          class="weui-cell__hd">
+          <image 
+            src="{{item.fixingIcon}}" 
+            style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;" />
+        </view>
+        <view class="weui-cell__bd">{{item.fixingName}}</view>
+        <view class="weui-cell__ft"></view>
+      </view>
+    </view>
+  </view>  
+</template>
+
+<script>
+  import Wepy from 'wepy'
+  import Base from 'mixins/base'
+  import Fixing from 'mixins/fixing'
+  export default class GetBindinginfo extends Wepy.page {
+    mixins = [Base, Fixing]
+    config = {
+      navigationBarTitleText: '我的设备'
+    }
+    async onLoad() {
+      let fixings = await this.GetBindinginfo()
+      this.fixingsInfo = fixings.data
+      this.$apply()
+    }
+  }
+</script>

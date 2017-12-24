@@ -25,6 +25,9 @@ export default class SignService {
   static GetLastPosition(data) {
     return Http.post(Api.GetLastPosition, data)
   }
+  static GetLastPositionSmall(data) {
+    return Http.post(Api.GetLastPositionSmall, data)
+  }
   static GetTrack(data) {
     return Http.post(Api.GetTrack, data)
   }

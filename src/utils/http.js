@@ -9,6 +9,7 @@ export default class http {
       method: method,
       header: header
     }
+
     // Tips.loading()
     let res = await wepy.request(param)
     if (this.isSuccess(res)) {

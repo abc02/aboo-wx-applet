@@ -94,6 +94,30 @@ export default class Tips {
       }, 800)
     }
   }
+  /**
+   * 定位提示框
+   */
+
+  static locationing(title = '定位中', onHide) {
+    if (Tips.isLoading) {
+      return
+    }
+    Tips.isLoading = true
+    wepy.showLoading({
+      title: title,
+      mask: true
+    })
+  }
+  /**
+   * 定位完毕
+   */
+
+  static locationed() {
+    if (Tips.isLoading) {
+      Tips.isLoading = false
+      wepy.hideLoading()
+    }
+  }
 
   /**
    * 弹出加载提示

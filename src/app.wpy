@@ -13,7 +13,8 @@
         'pages/login/PhoneLoginAccount',
         'pages/login/PhonePasswordGet',
         'pages/login/PhoneRegisterAccount',
-        'pages/user/GetMeInfo'
+        'pages/user/GetMeInfo',
+        'pages/fixing/GetBindinginfo'
       ],
       window: {
         backgroundTextStyle: 'light',
@@ -23,15 +24,16 @@
     }
     globalData = {
       userInfo: {
-        BindingNum: 2,
+        BindingNum: 3,
         Ciphertext: 'ea49f27f29b743bc4dff24c02a0297fc',
-        Icon: 'https://abuimg.0577xiedu.net/abupaopao/icon/11.png?18',
-        JwtToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIxMSIsImV4cCI6MTUxNDk2NTkxOH0.cP2PY9oNwQJKg81f70Fcb8IMwfCRQpPjE4-LfVAgfsI',
+        Icon: 'https://abuimg.0577xiedu.net/abupaopao/icon/11.png?56',
+        JwtToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIxMSIsImV4cCI6MTUxNTgyMzkwNn0.Z-ecBqC2PKcJTHgFYYzGlpEqo1Ymq3tRIdTDcALxeqQ',
         NickName: '防打扰',
-        UserId: 11,
+        UserId: '11',
         code: '登录成功',
         ret: 1001
       },
+      // userInfo: null,
       locationInfo: null
     }
     constructor() {

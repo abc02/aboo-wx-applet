@@ -15,7 +15,8 @@ module.exports = {
       '@': path.join(__dirname, 'src'),
       components: path.join(__dirname, 'src/components'),
       mixins: path.join(__dirname, 'src/mixins'),
-      services: path.join(__dirname, 'src/services')
+      services: path.join(__dirname, 'src/services'),
+      utils: path.join(__dirname, 'src/utils')
     },
     modules: ['node_modules']
   },

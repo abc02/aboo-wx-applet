@@ -11,13 +11,30 @@ export default class base extends wepy.mixin {
     Object.assign(this, this.def)
   }
   // 时间戳转换 -> yyyy-mm-dd
-  ToYYYYMMDD(data) {
-    let Time, Year, Month, Day
-    Time = new Date(Number.parseInt(data + '000'))
-    Year = Time.getFullYear()
-    Month = Time.getMonth() + 1
-    Day = Time.getDate()
-    return `绑定时间:${Year}年${Month}月${Day}日`
+  ToYYYYMMDD(date) {
+    let Year, Month, Day
+    Year = date.getFullYear()
+    Month = date.getMonth() + 1
+    Day = date.getDate()
+    return {
+      yyyy: Year,
+      mm: Month,
+      dd: Day
+    }
+  }
+  // 时间戳转换 -> hh-mm-ss-ms
+  ToHHMMSSMS(date) {
+    let Hours, Minutes, Seconds, Milliseconds
+    Hours = date.getHours()
+    Minutes = date.getMinutes()
+    Seconds = date.getSeconds()
+    Milliseconds = date.getMilliseconds()
+    return {
+      hh: Hours,
+      mm: Minutes,
+      ss: Seconds,
+      ms: Milliseconds
+    }
   }
   // 时间戳转换 -> week-hours-minutes
   ToWeekHoursMinutes(data) {
@@ -32,7 +49,6 @@ export default class base extends wepy.mixin {
     let Week = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
     return Week[index]
   }
-  To
   ToPad(num, n) {
     if ((num + '').length >= n) return num
     return this.ToPad('0' + num, n)

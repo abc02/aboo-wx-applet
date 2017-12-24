@@ -6,7 +6,7 @@ export default class testMixin extends Wepy.mixin {
     if (res.ret !== 1001) return
     this.$parent.globalData.userInfo = res
     this.$redirect({
-      url: '../index/index'
+      url: '../index/Index'
     })
   }
   async SendSms(data) {
