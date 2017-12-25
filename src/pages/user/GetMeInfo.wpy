@@ -31,7 +31,6 @@
               style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;" />
           </view>
           <view class="weui-cell__bd">{{item.text}}</view>
-          <view class="weui-cell__ft weui-cell__ft_in-access"></view>
         </navigator>
       </view>
     </view>

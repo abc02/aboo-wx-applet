@@ -1,25 +1,40 @@
+<style>
+page{
+  height: auto;
+}
+</style>
+
 <template>
-  <view>
-    <view class="weui-cells weui-cells_after-title">
-      <view 
-        class="weui-cell weui-cell_access" 
-        hover-class="weui-cell_active"
-        wx:for="{{fixingsInfo}}" 
-        wx:key="index" 
-        wx:for-index="index" 
-        wx:for-item="item" 
-        >
-        <view
-          wx:if="{{item.fixingIcon}}" 
-          class="weui-cell__hd">
-          <image 
-            src="{{item.fixingIcon}}" 
-            style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;" />
+  <view wx:if="{{fixingsInfo}}" >
+    <repeat 
+      for="{{fixingsInfo}}"
+      key="index" 
+      index="index" 
+      item="item"
+      >
+      <WepySwipe 
+        :swipeData="item" 
+        @currentTs.user="currentTs"
+        @updateFixingIsDefault.user="updateFixingIsDefault"
+        @unbind.user="unbind">
+        <view class="swipe-title">
+          <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell weui-cell_access ">
+              <view class="weui-cell__hd mr20">
+                <image class="icon-lg" src="{{item.fixingIcon}}" />
+              </view>
+            <view class="weui-cell__bd column-around">
+                <text class="lg mb20">设备昵称:{{item.fixingName}}</text>
+                <text class="sm muted">设备ID:{{item.fixingId}}</text>
+            </view>
+            <view class="weui-cell__ft">
+              <text>{{item.isDefault}}</text>
+            </view>
+          </view>
         </view>
-        <view class="weui-cell__bd">{{item.fixingName}}</view>
-        <view class="weui-cell__ft"></view>
-      </view>
-    </view>
+        </view>
+      </WepySwipe>
+    </repeat>
   </view>  
 </template>
 
@@ -27,15 +42,58 @@
   import Wepy from 'wepy'
   import Base from 'mixins/base'
   import Fixing from 'mixins/fixing'
+  import WepySwipe from 'components/wepySwipe'
+  import Tips from 'utils/tips'
   export default class GetBindinginfo extends Wepy.page {
     mixins = [Base, Fixing]
     config = {
       navigationBarTitleText: '我的设备'
     }
-    async onLoad() {
+    components = {
+      WepySwipe
+    }
+    methods = {
+      currentTs(id) {
+        this.fixingsInfo.forEach(item => {
+          if (id !== item.id) {
+            item.style = 0
+          }
+        })
+      },
+      async unbind(fixing) {
+        Tips.loading()
+        let res = await this.Unbind(fixing)
+        Tips.loaded()
+        if (res.ret !== 1001) return Tips.toast(res.code)
+        Tips.toast(res.code)
+        this.GetBindinginfoToWepySwipe()
+      },
+      async updateFixingIsDefault (fixing) {
+        Tips.loading()
+        let res = await this.UpdateFixingIsDefault(fixing)
+        Tips.loaded()
+        if (res.ret !== 1001) return Tips.toast(res.code)
+        Tips.toast(res.code)
+        // 重新获取用户绑定的设备数据
+        this.GetBindinginfoToWepySwipe()
+      }
+    }
+    async GetBindinginfoToWepySwipe() {
+       // loading data
+      Tips.loading()
       let fixings = await this.GetBindinginfo()
-      this.fixingsInfo = fixings.data
+      let fixingsArray = Array.from(fixings.data) // 转换数据
+      fixingsArray.forEach(item => {
+        item.style = 0
+      })
+      // 数据赋值， 脏检测
+      this.fixingsInfo = fixingsArray
       this.$apply()
+      // loaded
+      Tips.loaded()
+    }
+    onLoad() {
+      this.GetBindinginfoToWepySwipe()
     }
   }
 </script>

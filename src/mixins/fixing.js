@@ -20,8 +20,7 @@ export default class Fixing extends Wepy.mixin {
   }
   // 获取用户绑定信息
   async GetBindinginfo() {
-    let data = this.JoinFixingRequest()
-    let res = await FixingService.GetBindinginfo(data)
+    let res = await FixingService.GetBindinginfo(this.JoinFixingRequest())
     return res
   }
   // 获取设备最近一次历史定位数据
@@ -35,14 +34,18 @@ export default class Fixing extends Wepy.mixin {
   }
   // 获取设备定位数据
   async GetLastPositionSmall(fixing) {
+    console.log(fixing)
     let FixingLocationInfo = await FixingService.GetLastPositionSmall(this.JoinFixingRequest(fixing))
     if (FixingLocationInfo.data.Ret !== 1001) return Tips.toast('定位获取失败')
+
+    // 1003 初始化 1002 定位失败 1001 定位成功    13868623153  884127
+
     // 转换经纬度
     let TencentLocationInfo = await this.GetBaiduToTencentLocationInfo(FixingLocationInfo.data.Position)
     let res = this.SetMarkers(TencentLocationInfo.result, FixingLocationInfo.data)
     return res
   }
-  SetMarkers(markers, fixing) {
+  SetMarkers(markers, fixing, mssage) {
     let res = {
       id: 0,
       iconPath: './assets/location_animte.gif',
@@ -51,7 +54,18 @@ export default class Fixing extends Wepy.mixin {
       latitude: markers.location.lat,
       longitude: markers.location.lng,
       ...markers,
-      ...fixing
+      ...fixing,
+      label: {
+        content: '测试测试',
+        fontSize: 16,
+        x: -25,
+        y: -80,
+        borderWidth: 1,
+        borderColor: '#f3f3f3',
+        borderRadius: 6,
+        bgColor: '#ffffff',
+        padding: 3
+      }
     }
     return res
   }
@@ -74,6 +88,14 @@ export default class Fixing extends Wepy.mixin {
         }
       })
     })
+  }
+  async Unbind(fixing) {
+    let res = await FixingService.Unbind(this.JoinFixingRequest(fixing))
+    return res
+  }
+  async UpdateFixingIsDefault(fixing) {
+    let res = await FixingService.UpdateFixingIsDefault(this.JoinFixingRequest(fixing))
+    return res
   }
   onLoad() {
      // 实例化API核心类

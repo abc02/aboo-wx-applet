@@ -49,7 +49,7 @@
         >
         <cover-view class="weui-cell__bd column-around">
           <cover-view>{{locationInfo.formatted_addresses.recommend}}</cover-view>
-          <cover-view>{{locationInfo.address_component.district}}{{locationInfo.address_component.street_number}}</cover-view>
+          <cover-view>{{locationInfo.address}}</cover-view>
         </cover-view>
         <cover-view class="fixing__info">
           <cover-view class="battery">
@@ -135,7 +135,7 @@
         // 获取默认设备最后定位经纬度 接口定义延迟
         Tips.locationing()
         let res = await this.GetLastPositionSmall(this.isDefaultFixingInfo)
-        if (!res) {
+        if (!res && res.ret !== 1001) {
           Tips.locationed()
           Tips.toast('定位失败，稍后再试')
         } else {
@@ -170,6 +170,25 @@
         this.scale = this.scale - 1
       }
     }
+    async GetLastPositionToMap() {
+      Tips.locationing()
+      // 获取用户绑定的所有设备
+      let fixings = await this.GetBindinginfo()
+      this.fixingsInfo = fixings.data
+      this.$apply()
+      // 获取默认设备最后定位经纬度
+      let res = await this.GetLastPosition(this.isDefaultFixingInfo)
+      if (!res) {
+        Tips.locationed()
+        Tips.toast('定位失败，稍后再试')
+      } else {
+        this.locationInfo = res
+        this.markers = [res]
+        this.$apply()
+        Tips.locationed()
+        Tips.toast('定位成功')
+      }
+    }
     async onLoad() {
       // 授权获取用户数据
       this.userInfo = this.$parent.GetUserInfo()
@@ -178,28 +197,17 @@
       // this.$apply()
       // 用户是否登录
       if (this.userInfo) {
-        Tips.locationing()
-        // 获取用户绑定的所有设备
-        let fixings = await this.GetBindinginfo()
-        this.fixingsInfo = fixings.data
-        this.$apply()
-        // 获取默认设备最后定位经纬度
-        let res = await this.GetLastPosition(this.isDefaultFixingInfo)
-        if (!res) {
-          Tips.locationed()
-          Tips.toast('定位失败，稍后再试')
-        } else {
-          this.locationInfo = res
-          this.markers = [res]
-          this.$apply()
-          Tips.locationed()
-          Tips.toast('定位成功')
-        }
+        await this.GetLastPositionToMap()
       }
     }
     onReady() {
       // 定义myMap上下文
       this.mapCtx = Wepy.createMapContext('myMap')
+    }
+    async onShow() {
+      if (this.userInfo) {
+        await this.GetLastPositionToMap()
+      }
     }
   }
 </script>

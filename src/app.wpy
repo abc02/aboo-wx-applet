@@ -24,12 +24,12 @@
     }
     globalData = {
       userInfo: {
-        BindingNum: 3,
-        Ciphertext: 'ea49f27f29b743bc4dff24c02a0297fc',
-        Icon: 'https://abuimg.0577xiedu.net/abupaopao/icon/11.png?56',
-        JwtToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIxMSIsImV4cCI6MTUxNTgyMzkwNn0.Z-ecBqC2PKcJTHgFYYzGlpEqo1Ymq3tRIdTDcALxeqQ',
-        NickName: '防打扰',
-        UserId: '11',
+        BindingNum: 5,
+        Ciphertext: 'dd4ee2486c48709a066606b27b8835b0',
+        Icon: 'https://abuimg.0577xiedu.net/abupaopao/icon/2.png?47',
+        JwtToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIyIiwiZXhwIjoxNTE1OTIwMTUzfQ.FcUHWokCvZsNqKn6R_VjVLOEyC3FA2UNTGcG1NulBSE',
+        NickName: 'Cherry',
+        UserId: 2,
         code: '登录成功',
         ret: 1001
       },
