@@ -1,11 +1,20 @@
-<style>
+<style lang="scss">
 page{
   height: auto;
+}
+.weui-cells {
+  @extend .weui-cells;
+  &:before {
+    border-top: none;
+  }
 }
 </style>
 
 <template>
   <view wx:if="{{fixingsInfo}}" >
+    <view wx:if="{{fixingsInfo.length > 0}}" class="mt10 mb10 ml10 mr10">
+      <text class="muted sm">已绑定的设备:</text>
+    </view>
     <repeat 
       for="{{fixingsInfo}}"
       key="index" 

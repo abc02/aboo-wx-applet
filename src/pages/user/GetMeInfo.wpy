@@ -30,7 +30,9 @@
               src="{{item.iconPath}}" 
               style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;" />
           </view>
-          <view class="weui-cell__bd">{{item.text}}</view>
+          <view class="weui-cell__bd pt10 pb10">
+            <text class="lg normal">{{item.text}}</text>
+          </view>
         </navigator>
       </view>
     </view>
@@ -55,13 +57,13 @@
         },
         {
           text: '功能介绍',
-          url: '',
+          url: '../use/UseApp',
           icon: false,
           iconPath: ''
         },
         {
           text: '常见问题',
-          url: '',
+          url: '../faq/FAQ',
           icon: false,
           iconPath: ''
         }

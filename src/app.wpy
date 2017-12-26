@@ -14,7 +14,9 @@
         'pages/login/PhonePasswordGet',
         'pages/login/PhoneRegisterAccount',
         'pages/user/GetMeInfo',
-        'pages/fixing/GetBindinginfo'
+        'pages/fixing/GetBindinginfo',
+        'pages/use/UseApp',
+        'pages/faq/FAQ'
       ],
       window: {
         backgroundTextStyle: 'light',

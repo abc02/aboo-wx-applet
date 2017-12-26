@@ -1,12 +1,15 @@
-<style lang="less">
+<style lang="scss">
 .swipe-item-wrapper{
   height: 120rpx;
   position: relative;
   overflow: hidden;
   padding: 0 10px;
-  margin-top: 10rpx;
+  // margin-top: 10rpx;
   border-top: 1px solid #e5e5e5;
-  border-bottom: 1px solid #e5e5e5;
+  // border-bottom: 1px solid #e5e5e5;
+  &:last-child {
+    border-bottom: 1px solid #e5e5e5;
+  }
   .swipe-actions{
     display: flex;
     flex-direction: row;
@@ -70,8 +73,8 @@
       <slot></slot>
     </view>
     <view class="swipe-actions actions-right">
-      <view wx:if="{{swipeData.isDefault !== '1'}}" class="swipe-btn default" @tap.stop="updateFixingIsDefault({{swipeData}})">默认</view>
-      <view class="swipe-btn unbind" @tap.stop="unbind({{swipeData}})">解绑</view>
+      <view wx:if="{{swipeData.isDefault !== '1'}}" class="swipe-btn default" @tap.stop="openConfirm({{swipeData}}, 'default')">默认</view>
+      <view class="swipe-btn unbind" @tap.stop="openConfirm({{swipeData}}, 'unbind')">解绑</view>
     </view>
   </view>
 </template>
@@ -134,13 +137,26 @@
           })
         }
       },
-      unbind(fixing) {
+      async openConfirm(fixing, type) {
         delete fixing.style
-        this.$emit('unbind', fixing)
-      },
-      updateFixingIsDefault (fixing) {
-        delete fixing.style
-        this.$emit('updateFixingIsDefault', fixing)
+        let content
+        type === 'unbind' ? content = '确认对该设备解除绑定?' : content = '确认对该设备设置为默认?'
+        let res = await wepy.showModal({
+          title: '提醒',
+          content: content,
+          confirmText: '确认',
+          cancelText: '取消'
+        })
+
+        if (res.confirm) {
+          if (type === 'unbind') {
+            this.$emit('unbind', fixing)
+          } else {
+            this.$emit('updateFixingIsDefault', fixing)
+          }
+        } else {
+          this.$emit('currentTs', fixing.fixingId)
+        }
       }
     }
   }

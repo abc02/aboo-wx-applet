@@ -1,0 +1,29 @@
+<style lang="scss">
+</style>
+
+<template>
+  <view class='column mt20 mb20 ml20 mr20'>
+     功能介绍
+  </view>
+</template>
+
+<script>
+  import Wepy from 'wepy'
+  import Base from 'mixins/base'
+  export default class GetMeInfo extends Wepy.page {
+    mixins = [Base]
+    config = {
+      navigationBarTitleText: '功能介绍'
+    }
+    data = {
+      list: [
+        {
+          text: '常见问题',
+          url: '',
+          icon: false,
+          iconPath: ''
+        }
+      ]
+    }
+  }
+</script>
