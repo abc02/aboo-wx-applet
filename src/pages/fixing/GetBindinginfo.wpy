@@ -90,16 +90,21 @@ page{
     async GetBindinginfoToWepySwipe() {
        // loading data
       Tips.loading()
-      let fixings = await this.GetBindinginfo()
-      let fixingsArray = Array.from(fixings.data) // 转换数据
-      fixingsArray.forEach(item => {
+      let res = await this.GetBindinginfo()
+      Tips.loaded()
+      if (res.ret !== 1001) {
+        Tips.toast(res.code)
+        this.fixingsInfo = null
+        this.$apply()
+        return
+      }
+      let array = Array.from(res.data) // 转换数据
+      array.forEach(item => {
         item.style = 0
       })
       // 数据赋值， 脏检测
-      this.fixingsInfo = fixingsArray
+      this.fixingsInfo = array
       this.$apply()
-      // loaded
-      Tips.loaded()
     }
     onLoad() {
       this.GetBindinginfoToWepySwipe()

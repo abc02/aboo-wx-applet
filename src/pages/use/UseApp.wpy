@@ -1,15 +1,40 @@
 <style lang="scss">
+swiper{
+  height: 384rpx;
+  width: 216rpx;
+  image{
+    width:100%;
+    height:100%
+  }
+}
 </style>
 
 <template>
-  <view class='column mt20 mb20 ml20 mr20'>
-     功能介绍
+  <view class="mt20 mb20 ml20 mr20">
+     <block wx:for="{{list}}" wx:key="key" wx:for-index="itemIndex" wx:for-item="itemKey">
+      <view>
+        <text class="lg normal">{{itemKey.title}}</text>
+      </view>
+      <view class="mt10 ml20" wx:for="{{itemKey.text}}" wx:key="key" wx:for-index="txtIndex" wx:for-item="txt">
+           <text class="sm muted">{{txt}}</text>
+      </view>
+      <view class="row-center" wx:if="{{itemKey.swiper}}">
+      <swiper indicator-dots="{{true}}" autoplay="{{false}}">
+        <block wx:for="{{itemKey.swiper}}" wx:key="key" wx:for-index="swiperIndex" wx:for-item="swiper">
+          <swiper-item>
+            <image src="{{swiper}}" class="slide-image" width="216" height="384"/>
+          </swiper-item>
+        </block>
+      </swiper>
+      </view>
+     </block> 
   </view>
 </template>
 
 <script>
   import Wepy from 'wepy'
   import Base from 'mixins/base'
+
   export default class GetMeInfo extends Wepy.page {
     mixins = [Base]
     config = {
@@ -18,10 +43,19 @@
     data = {
       list: [
         {
-          text: '常见问题',
-          url: '',
-          icon: false,
-          iconPath: ''
+          title: '添加新成员',
+          text: [
+            '新用户扫描二维码时，并正确输入设备密码“默认密码0000”管理员就会收到请求绑定通知，管理员进入指定设备的绑定列表界面，可进行同意/拒绝操作，当管理员同意/拒绝新用户即可收到通知。'
+          ]
+        },
+        {
+          title: '获取位置',
+          text: [
+            '设备会根据用户设置的模式（省电模式：1小时，非省电模式：3分钟）进行自动上传位置信息。用户也可点击更新位置按钮，获取设备当前所在位置信息。'
+          ]
+        },
+        {
+          title: '设备状态',
         }
       ]
     }

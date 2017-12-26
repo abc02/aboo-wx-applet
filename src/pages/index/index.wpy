@@ -105,7 +105,7 @@
       navigationBarTitleText: '阿布跑跑'
     }
     data = {
-      isInit: true,
+      isFirst: true,
       scale: 16, // 默认 16
       markers: null,
       locationInfo: {
@@ -171,14 +171,11 @@
     // 首次进入界面获取历史定位数据
     async GetLastPositionToMap() {
       Tips.locationing()
-      // 获取用户绑定的所有设备
-      let fixings = await this.GetBindinginfo()
-      this.fixingsInfo = fixings.data
-      this.$apply()
       // 获取默认设备最后定位经纬度
       let res = await this.GetLastPosition(this.isDefaultFixingInfo)
       this.locationInfo = res
       this.markers = [res]
+      this.isFirst = false
       this.$apply()
       Tips.locationed()
     }
@@ -191,10 +188,38 @@
       this.mapCtx = Wepy.createMapContext('myMap')
     }
     async onShow() {
-      // 用户是否登录 & 首次进入界面获取 API -> GetLastPosition
-      if (this.userInfo && this.isInit) {
-        await this.GetLastPositionToMap()
-      } else {
+       // 用户是否登录 & 首次进入界面获取 API -> GetLastPosition
+      if (this.userInfo && this.isFirst) {
+        // 获取用户绑定的所有设备
+        let res = await this.GetBindinginfo()
+        if (res.ret === 1002) {
+          let dialog = await Wepy.showModal({
+            content: '还未绑定设备，现在去绑定。',
+            showCancel: false
+          })
+          if (dialog.confirm) {
+            let qrCode = await Wepy.scanCode({
+              sourceType: ['qrCode']
+            })
+            console.log(qrCode)
+            let url = `${qrCode.result}&${this.userInfo.Ciphertext}&${this.userInfo.UserId}`
+            console.log(url)
+            let test = await Wepy.request({
+              url,
+              method: 'POST'
+            })
+            console.log(test)
+          }
+        }
+        if (res.data && res.data.length > 0) {
+          this.fixingsInfo = res.data
+          this.$apply()
+          await this.GetLastPositionToMap()
+        }
+      } else if (this.userInfo) {
+        let res = await this.GetBindinginfo()
+        this.fixingsInfo = res.data
+        this.$apply()
         await this.GetLastPositionSmallToMap()
       }
     }

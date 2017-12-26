@@ -143,9 +143,7 @@
         type === 'unbind' ? content = '确认对该设备解除绑定?' : content = '确认对该设备设置为默认?'
         let res = await wepy.showModal({
           title: '提醒',
-          content: content,
-          confirmText: '确认',
-          cancelText: '取消'
+          content
         })
 
         if (res.confirm) {
