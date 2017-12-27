@@ -14,13 +14,14 @@
     }
 }
 
-.weui-cells__login__title {
+.weui-cells__title {
     @extend .weui-cells__title;
     font-size: $text-xxl;
     color: $color-normal;
 }
 
-.weui-cells__login {
+
+.weui-cells {
     @extend .weui-cells;
     &::after {
         border-bottom: none;
@@ -28,8 +29,12 @@
     &::before {
         border-top: none;
     }
+    .weui-input {
+        font-size: $text-xl;
+        border-bottom: 1rpx solid rgba(0,0,0,.1);
+    }
 }
-.weui-footer__login__link{
+.weui-footer__link{
     @extend .weui-footer__link;
     color:  $color-primary;
 }

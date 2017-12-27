@@ -4,7 +4,7 @@
   top: 0;
   left: 0;
   right: 0;
-  background-color: rgba($color: #ffffff, $alpha: .8);
+  background-color: rgba($color: #ffffff, $alpha: 1);
   display: flex;
  justify-content: space-around;
 }
@@ -22,7 +22,9 @@
   display: flex;
   flex-direction: row;
   .battery{
-    width: 100rpx;
+    width: 58rpx;
+    height: 24rpx;
+    overflow: visible;
   }
   .fixing{
     display: flex;
@@ -30,7 +32,11 @@
     align-items: center;
   }
 }
-
+.mode{
+  width: 30rpx;
+  height: 30rpx;
+  vertical-align: middle;
+}
 </style>
 
 <template>
@@ -49,11 +55,25 @@
         >
         <cover-view class="weui-cell__bd column-around">
           <cover-view>{{locationInfo.formatted_addresses.recommend}}</cover-view>
-          <cover-view class="inline">{{locationInfo.address}}</cover-view>
+          <cover-view class="row">
+            <cover-view class="mr10">
+              <cover-image class="mode" wx:if="{{locationInfo.Mode === 'LBS'}}" src="./assets/lbs-small.png"/>
+              <cover-image class="mode" wx:if="{{locationInfo.Mode === 'GPS'}}" src="./assets/gp-small.png"/>
+              <cover-image class="mode" wx:if="{{locationInfo.Mode === 'WIFI'}}" src="./assets/wifi-small.png"/>
+            </cover-view>
+            <cover-view class="weak mr10">精度{{locationInfo.Radius}}米</cover-view>
+            <cover-view class="weak">{{locationInfo.address_component.district}}{{locationInfo.address_component.street_number}}</cover-view>
+          </cover-view>
         </cover-view>
         <cover-view class="fixing__info">
-          <cover-view class="battery">
-            <cover-view>电量:{{locationInfo.Battery}}%</cover-view>
+          <cover-view class="mr10" wx:if="{{Battery}}">
+            <cover-image class="battery" wx:if="{{Battery > 0 && Battery <= 10 }}" src="./assets/battery/10.png"/>
+            <cover-image class="battery" wx:if="{{Battery > 10 && Battery <= 20 }}" src="./assets/battery/20.png"/>
+            <cover-image class="battery" wx:if="{{Battery > 20 && Battery <= 35 }}" src="./assets/battery/35.png"/>
+            <cover-image class="battery" wx:if="{{Battery > 35 && Battery <= 50 }}" src="./assets/battery/50.png"/>
+            <cover-image class="battery" wx:if="{{Battery > 50 && Battery <= 70 }}" src="./assets/battery/70.png"/>
+            <cover-image class="battery" wx:if="{{Battery > 70 && Battery <= 90 }}" src="./assets/battery/90.png"/>
+            <cover-image class="battery" wx:if="{{Battery > 90 && Battery <= 100 }}" src="./assets/battery/100.png"/>
           </cover-view>
           <cover-view class="fixing">
             <cover-image class="icon-lg" src="{{isDefaultFixingInfo.fixingIcon}}"/>
@@ -125,6 +145,12 @@
           }
         }
         return null
+      },
+      Battery() {
+        if (this.locationInfo && this.locationInfo.Battery) {
+          return Number.parseInt(this.locationInfo.Battery)
+        }
+        return null
       }
     }
     methods = {
@@ -133,6 +159,7 @@
         this.mapCtx.moveToLocation()
       },
       getLastPositionSmall() {
+        console.log(typeof this.locationInfo.Battery)
         this.GetLastPositionSmallToMap()
       },
       toGetMeInfo() {
@@ -188,35 +215,15 @@
       this.mapCtx = Wepy.createMapContext('myMap')
     }
     async onShow() {
-       // 用户是否登录 & 首次进入界面获取 API -> GetLastPosition
+      // 用户是否登录 & 首次进入界面获取 API -> GetLastPosition
       if (this.userInfo && this.isFirst) {
-        // 获取用户绑定的所有设备
+        // 获取最后历史定位
         let res = await this.GetBindinginfo()
-        if (res.ret === 1002) {
-          let dialog = await Wepy.showModal({
-            content: '还未绑定设备，现在去绑定。',
-            showCancel: false
-          })
-          if (dialog.confirm) {
-            let qrCode = await Wepy.scanCode({
-              sourceType: ['qrCode']
-            })
-            console.log(qrCode)
-            let url = `${qrCode.result}&${this.userInfo.Ciphertext}&${this.userInfo.UserId}`
-            console.log(url)
-            let test = await Wepy.request({
-              url,
-              method: 'POST'
-            })
-            console.log(test)
-          }
-        }
-        if (res.data && res.data.length > 0) {
-          this.fixingsInfo = res.data
-          this.$apply()
-          await this.GetLastPositionToMap()
-        }
-      } else if (this.userInfo) {
+        this.fixingsInfo = res.data
+        this.$apply()
+        await this.GetLastPositionToMap()
+      } else if (this.userInfo && this.isDefaultFixingInfo && !this.isFirst) {
+        // res 返回 数据 获取定位
         let res = await this.GetBindinginfo()
         this.fixingsInfo = res.data
         this.$apply()

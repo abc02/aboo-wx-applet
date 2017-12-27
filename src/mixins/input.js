@@ -58,7 +58,14 @@
       onInput(e) {
         const fieldName = e.currentTarget.id
         this.input[fieldName] = e.detail.value
-        this.input['phone'].length === 11 ? this.isDisabled = false : this.isDisabled = true
+        //  判断手机号大于等于11位
+        if (this.input['phone']) {
+          this.input['phone'].length === 11 ? this.isDisabled = false : this.isDisabled = true
+        }
+        // 判断设备密码大于等于4位
+        if (this.input['fixingPassword']) {
+          this.input['fixingPassword'].length >= 4 ? this.isDisabled = false : this.isDisabled = true
+        }
       },
       // 处理单选事件
       onRadio(e) {

@@ -36,8 +36,8 @@ page{
                 <text class="lg mb20">设备昵称:{{item.fixingName}}</text>
                 <text class="sm muted">设备ID:{{item.fixingId}}</text>
             </view>
-            <view class="weui-cell__ft">
-              <text>{{item.isDefault}}</text>
+            <view class="weui-cell__ft" wx:if="{{item.isDefault === '1'}}">
+              <image class="icon" src="./assets/icon_default.png" />
             </view>
           </view>
         </view>

@@ -1,10 +1,10 @@
 <template>
   <view class='mt20 mb20 ml20 mr20'>
     <panel>
-      <view class="weui-cells__login__title" slot="title">新用户注册</view>
-      <view class="weui-cells__login weui-cells_after-title form ">
+      <view class="weui-cells__title" slot="title">新用户注册</view>
+      <view class="weui-cells weui-cells_after-title form ">
         <blcok wx:for="{{list}}" wx:key="index" wx:index="index" wx:item="item">
-          <view class="mt20 weui-cell weui-cell_input {{item.vsCode ?  'weui-cell_vcode' : ''}}">
+          <view class="weui-cell weui-cell_input {{item.vsCode ?  'weui-cell_vcode' : ''}}">
             <view class="weui-cell__bd">
               <input 
               class="weui-input" 
@@ -27,7 +27,7 @@
         class="mt20" 
         type="primary" 
         disabled="{{isDisabled}}"
-        @tap="PhoneRegisterAccount({{input}})"
+        @tap="phoneRegisterAccount({{input}})"
         >注册</button>
       </view>
     </panel>

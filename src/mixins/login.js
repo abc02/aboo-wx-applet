@@ -2,7 +2,7 @@ import Wepy from 'wepy'
 import LoginService from '../services/loginService'
 import Tips from '../utils/tips'
 export default class testMixin extends Wepy.mixin {
-  toIndex(res) {
+  ToIndex(res) {
     if (res.ret !== 1001) return
     this.$parent.globalData.userInfo = res
     this.$redirect({
@@ -18,19 +18,19 @@ export default class testMixin extends Wepy.mixin {
     })
   }
   methods = {
-    async PhoneLoginAccount(data) {
+    async phoneLoginAccount(data) {
       let res = await LoginService.PhoneLoginAccount(data)
       Tips.toast(res.code, () => {
-        this.toIndex(res)
+        this.ToIndex(res)
       })
     },
-    async PhoneRegisterAccount(data) {
+    async phoneRegisterAccount(data) {
       let res = await LoginService.PhoneRegisterAccount(data)
       Tips.toast(res.code, () => {
         Wepy.navigateBack()
       })
     },
-    async PhonePasswordGet(data) {
+    async phonePasswordGet(data) {
       let res = await LoginService.PhonePasswordGet(data)
       Tips.toast(res.code, () => {
         Wepy.navigateBack()

@@ -1,6 +1,6 @@
-import wepy from 'wepy'
+import Wepy from 'wepy'
 import Tips from '../utils/tips'
-export default class base extends wepy.mixin {
+export default class base extends Wepy.mixin {
   loaded() {
     this.init = true
     this.$apply()
@@ -52,6 +52,19 @@ export default class base extends wepy.mixin {
   ToPad(num, n) {
     if ((num + '').length >= n) return num
     return this.ToPad('0' + num, n)
+  }
+  // 调用微信扫码api
+  async GetQRCode() {
+    return await Wepy.scanCode({
+      sourceType: ['qrCode']
+    })
+  }
+  // 提示弹窗
+  async ShowModal(message) {
+    return await Wepy.showModal({
+      content: message,
+      showCancel: false
+    })
   }
   methods = {
     nopen() {
