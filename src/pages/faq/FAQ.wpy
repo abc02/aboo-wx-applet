@@ -17,7 +17,7 @@
 <script>
   import Wepy from 'wepy'
   import Base from 'mixins/base'
-  export default class GetMeInfo extends Wepy.page {
+  export default class FAQ extends Wepy.page {
     mixins = [Base]
     config = {
       navigationBarTitleText: '常见问题'

@@ -108,6 +108,16 @@ export default class Fixing extends Wepy.mixin {
       width: 50,
       height: 50
     }
+    let callout = {
+      content: message.message,
+      color: '#000000',
+      fontSize: 16,
+      borderRadius: 16,
+      bgColor: '#ffffff',
+      padding: 8,
+      display: 'ALWAYS',
+      textAlign: 'center'
+    }
     let label = {
       content: message.message,
       fontSize: 16,
@@ -128,13 +138,13 @@ export default class Fixing extends Wepy.mixin {
         longitude: TencentLocationInfo.location.lng,
         ...TencentLocationInfo,
         ...fixingInfo,
-        label
+        callout
       }
     } else {
       res = {
         ...markers,
         ...res,
-        label
+        callout
       }
     }
     return res

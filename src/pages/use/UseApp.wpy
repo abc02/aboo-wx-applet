@@ -35,7 +35,7 @@ swiper{
   import Wepy from 'wepy'
   import Base from 'mixins/base'
 
-  export default class GetMeInfo extends Wepy.page {
+  export default class UseApp extends Wepy.page {
     mixins = [Base]
     config = {
       navigationBarTitleText: '功能介绍'
@@ -51,11 +51,14 @@ swiper{
         {
           title: '获取位置',
           text: [
-            '设备会根据用户设置的模式（省电模式：1小时，非省电模式：3分钟）进行自动上传位置信息。用户也可点击更新位置按钮，获取设备当前所在位置信息。'
+            '设备会根据用户设置的模式（省电模式：1小时，非省电模式：3分钟）进行自动上传位置信息。用户也可点击获取位置按钮，获取设备当前所在位置信息。'
           ]
         },
         {
-          title: '设备状态'
+          title: '设备状态',
+          text: [
+            '正在初始化，设备已关机。两种状态'
+          ]
         }
       ]
     }

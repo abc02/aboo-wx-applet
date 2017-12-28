@@ -29,7 +29,11 @@
         disabled="{{isDisabled}}"
         @tap="phoneRegisterAccount({{input}})"
         >注册</button>
+       
       </view>
+       <view class="mt10 ml10">
+          <text class="sm muted">完成注册代表你已同意</text><text class="sm primary">《阿布跑跑用户协议》</text>
+        </view>
     </panel>
   </view>
 </template>
@@ -41,7 +45,7 @@
   import VCode from 'mixins/vcode'
   import Login from 'mixins/login'
   import Panel from 'components/panel'
-  export default class PhoneLoginAccount extends Wepy.page {
+  export default class PhoneRegisterAccount extends Wepy.page {
     mixins = [Base, Input, VCode, Login]
     config = {
       navigationBarTitleText: '注册'

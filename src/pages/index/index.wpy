@@ -159,7 +159,6 @@
         this.mapCtx.moveToLocation()
       },
       getLastPositionSmall() {
-        console.log(typeof this.locationInfo.Battery)
         this.GetLastPositionSmallToMap()
       },
       toGetMeInfo() {
