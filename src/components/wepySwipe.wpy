@@ -69,12 +69,13 @@
       style="left:{{swipeData.style === 0 ? '0' : swipeData.style + 'rpx'}}"
       @touchstart="ts"
       @touchmove="tm"
-      @touchend="te">
+      @touchend="te"
+      @tap.stop="updateFixingIsDefault({{swipeData}})"
+      >
       <slot></slot>
     </view>
     <view class="swipe-actions actions-right">
-      <view wx:if="{{swipeData.isDefault !== '1'}}" class="swipe-btn default" @tap.stop="openConfirm({{swipeData}}, 'default')">默认</view>
-      <view class="swipe-btn unbind" @tap.stop="openConfirm({{swipeData}}, 'unbind')">解绑</view>
+      <view class="swipe-btn unbind" @tap.stop="unbind({{swipeData}})">解绑</view>
     </view>
   </view>
 </template>
@@ -137,13 +138,38 @@
           })
         }
       },
+      async updateFixingIsDefault(fixing) {
+        delete fixing.style
+        let content = `您确认将${fixing.fixingName}设置为默认吗?`
+        let res = await wepy.showModal({
+          title: '提醒',
+          content,
+          confirmColor: '#f6655e'
+        })
+        if (res.confirm) {
+          this.$emit('updateFixingIsDefault', fixing)
+        }
+      },
+      async unbind(fixing) {
+        delete fixing.style
+        let content = `您确认将${fixing.fixingName}解除绑定吗?`
+        let res = await wepy.showModal({
+          title: '提醒',
+          content,
+          confirmColor: '#f6655e'
+        })
+        if (res.confirm) {
+          this.$emit('unbind', fixing)
+        }
+      },
       async openConfirm(fixing, type) {
         delete fixing.style
         let content
         type === 'unbind' ? content = '确认对该设备解除绑定?' : content = '确认对该设备设置为默认?'
         let res = await wepy.showModal({
           title: '提醒',
-          content
+          content,
+          confirmColor: '#f6655e'
         })
 
         if (res.confirm) {

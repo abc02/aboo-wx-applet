@@ -51,16 +51,19 @@ button[disabled][type="primary"]{
 text.white{color:#FFF}
 text.muted,input.muted,view.muted{color: $color-muted}
 text.weak,.weak{color: $color-weak}
-text.normal{color: $color-normal}
-text.primary{color: $color-primary}
+text.normal,.normal{color: $color-normal}
+text.primary,.primary{color: $color-primary}
 text.major{color: $color-major}
 text.danger{color: $color-danger}
 
-text.xl{font-size: $text-xl}
-text.xxl{font-size: $text-xxl}
-text.lg{font-size: $text-lg}
-text.sm{font-size: $text-sm}
-text.xs{font-size: $text-xs}
+text.xl,.xl{font-size: $text-xl}
+text.xxl,.xxl{font-size: $text-xxl}
+text.big,.big{font-size: 42rpx}
+text.lg,.lg{font-size: $text-lg}
+text.sm,.sm{font-size: $text-sm}
+text.xs,.xs{font-size: $text-xs}
+text.small,.small{font-size: 20rpx}
+text.bold,.bold{font-weight:bold}
 
 text.inline,.inline{
   text-overflow: ellipsis;

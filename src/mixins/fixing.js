@@ -36,6 +36,21 @@ export default class Fixing extends Wepy.mixin {
     console.log(fixingIdCipher)
     return fixingIdCipher
   }
+  // 用户扫码绑定, 处理
+  async BindingFixing() {
+    // 确认 -> 调用微信扫码api
+    let url = await this.GetQRCode()
+    // 请求地址 获取设备id密文
+    Tips.loading()
+    let fixingIdCipher = await this.GetFixingIdCipher(url)
+    Tips.loaded()
+    if (fixingIdCipher.data) {
+        // 获取成功 -> 转跳输入设备密码
+      this.$redirect({
+        url: `../fixing/AddBinding?fixingIdCipher=${fixingIdCipher.data}`
+      })
+    }
+  }
   // 获取用户绑定信息
   async GetBindinginfo() {
     let res = await FixingService.GetBindinginfo(this.JoinFixingRequest())
@@ -61,21 +76,6 @@ export default class Fixing extends Wepy.mixin {
       return res
     }
   }
-  // 用户扫码绑定, 处理
-  async BindingFixing() {
-    // 确认 -> 调用微信扫码api
-    let url = await this.GetQRCode()
-    // 请求地址 获取设备id密文
-    Tips.loading()
-    let fixingIdCipher = await this.GetFixingIdCipher(url)
-    Tips.loaded()
-    if (fixingIdCipher.data) {
-        // 获取成功 -> 转跳输入设备密码
-      this.$redirect({
-        url: `../fixing/AddBinding?fixingIdCipher=${fixingIdCipher.data}`
-      })
-    }
-  }
   // 获取设备最近一次历史定位数据
   async GetLastPosition(fixing) {
     let FixingLocationInfo = await FixingService.GetLastPosition(this.JoinFixingRequest(fixing))
@@ -83,8 +83,15 @@ export default class Fixing extends Wepy.mixin {
   }
   // 获取设备定位数据
   async GetLastPositionSmall(fixing) {
-    let FixingLocationInfo = await FixingService.GetLastPositionSmall(this.JoinFixingRequest(fixing))
-    return await this.GetLastPositonResponse(FixingLocationInfo)
+    let FixingLocationInfo 
+    try {
+      FixingLocationInfo = await FixingService.GetLastPositionSmall(this.JoinFixingRequest(fixing))
+      return await this.GetLastPositonResponse(FixingLocationInfo)
+    }
+    catch (err) {
+      FixingLocationInfo = {ret: 1002}
+      return await this.GetLastPositonResponse(FixingLocationInfo)
+    }
   }
   async GetLastPositonResponse(res) {
     let exp

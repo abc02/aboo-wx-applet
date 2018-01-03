@@ -27,6 +27,8 @@
     overflow: visible;
   }
   .fixing{
+    position: relative;
+    left: -5rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -54,30 +56,39 @@
         wx-if="{{locationInfo.MachineCode}}"
         >
         <cover-view class="weui-cell__bd column-around">
-          <cover-view>{{locationInfo.formatted_addresses.recommend}}</cover-view>
-          <cover-view class="row">
+          <cover-view class="big bold" wx:if="{{locationInfo.address_reference.landmark_l1}}">{{locationInfo.address_reference.landmark_l1.title}}</cover-view>
+          <cover-view class="big bold" wx:else>{{locationInfo.address_reference.landmark_l2.title}}</cover-view>
+          <cover-view class="row mt20">
             <cover-view class="mr10">
               <cover-image class="mode" wx:if="{{locationInfo.Mode === 'LBS'}}" src="./assets/lbs-small.png"/>
-              <cover-image class="mode" wx:if="{{locationInfo.Mode === 'GPS'}}" src="./assets/gp-small.png"/>
+              <cover-image class="mode" wx:if="{{locationInfo.Mode === 'GPS'}}" src="./assets/gps-small.png"/>
               <cover-image class="mode" wx:if="{{locationInfo.Mode === 'WIFI'}}" src="./assets/wifi-small.png"/>
             </cover-view>
             <cover-view class="weak mr10">精度{{locationInfo.Radius}}米</cover-view>
-            <cover-view class="weak">{{locationInfo.address_component.district}}{{locationInfo.address_component.street_number}}</cover-view>
+            <cover-view class="sm weak">{{locationInfo.address_component.district}}{{locationInfo.address_component.street_number}}</cover-view>
           </cover-view>
         </cover-view>
         <cover-view class="fixing__info">
-          <cover-view class="mr10" wx:if="{{Battery}}">
-            <cover-image class="battery" wx:if="{{Battery > 0 && Battery <= 10 }}" src="./assets/battery/10.png"/>
-            <cover-image class="battery" wx:if="{{Battery > 10 && Battery <= 20 }}" src="./assets/battery/20.png"/>
-            <cover-image class="battery" wx:if="{{Battery > 20 && Battery <= 35 }}" src="./assets/battery/35.png"/>
-            <cover-image class="battery" wx:if="{{Battery > 35 && Battery <= 50 }}" src="./assets/battery/50.png"/>
-            <cover-image class="battery" wx:if="{{Battery > 50 && Battery <= 70 }}" src="./assets/battery/70.png"/>
-            <cover-image class="battery" wx:if="{{Battery > 70 && Battery <= 90 }}" src="./assets/battery/90.png"/>
-            <cover-image class="battery" wx:if="{{Battery > 90 && Battery <= 100 }}" src="./assets/battery/100.png"/>
+          <cover-view class="mr10 column-around small">
+            <cover-view class="weak row-center" wx:if="{{Battery}}">
+              <cover-view class="mr10">
+                <cover-image class="battery" wx:if="{{Battery > 0 && Battery <= 10 }}" src="./assets/battery/10.png"/>
+                <cover-image class="battery" wx:if="{{Battery > 10 && Battery <= 20 }}" src="./assets/battery/20.png"/>
+                <cover-image class="battery" wx:if="{{Battery > 20 && Battery <= 35 }}" src="./assets/battery/35.png"/>
+                <cover-image class="battery" wx:if="{{Battery > 35 && Battery <= 50 }}" src="./assets/battery/50.png"/>
+                <cover-image class="battery" wx:if="{{Battery > 50 && Battery <= 70 }}" src="./assets/battery/70.png"/>
+                <cover-image class="battery" wx:if="{{Battery > 70 && Battery <= 90 }}" src="./assets/battery/90.png"/>
+                <cover-image class="battery" wx:if="{{Battery > 90 && Battery <= 100 }}" src="./assets/battery/100.png"/>
+              </cover-view>
+              <cover-view class="xs">{{locationInfo.Battery}}%</cover-view>
+            </cover-view>
+            <cover-view class="creatTime primary mt20" wx:if="{{CreatTime}}">
+              {{CreatTime}}
+            </cover-view>
           </cover-view>
-          <cover-view class="fixing">
+          <cover-view class="fixing column-around xs">
             <cover-image class="icon-lg" src="{{isDefaultFixingInfo.fixingIcon}}"/>
-            <cover-view>{{isDefaultFixingInfo.fixingName}}</cover-view>
+            <cover-view class="pl10 pr10">{{isDefaultFixingInfo.fixingName}}</cover-view>
           </cover-view>
         </cover-view>
       </cover-view>
@@ -151,6 +162,14 @@
           return Number.parseInt(this.locationInfo.Battery)
         }
         return null
+      },
+      CreatTime() {
+        if (this.locationInfo && this.locationInfo.CreatTime) {
+          let date = Number.parseInt(this.locationInfo.CreatTime + '000')
+          let creatTime = this.ToTodayOrYesterday(date)
+          return creatTime
+        }
+        return null
       }
     }
     methods = {
@@ -158,8 +177,23 @@
       moveToLocation() {
         this.mapCtx.moveToLocation()
       },
-      getLastPositionSmall() {
-        this.GetLastPositionSmallToMap()
+      async getLastPositionSmall() {
+        Tips.locationing()
+        let markers = await this.GetLastPositionSmall(this.isDefaultFixingInfo)
+        this.locationInfo = {...markers}
+        this.markers = [{...markers}]
+        this.$apply()
+        Tips.locationed()
+        this.mapCtx.translateMarker({
+          markerId: 0,
+          autoRotate: true,
+          duration: 1000,
+          rotate: 90,
+          destination: {
+            latitude: markers.latitude,
+            longitude: markers.longitude
+          }
+        })
       },
       toGetMeInfo() {
         Wepy.navigateTo({
@@ -167,43 +201,33 @@
         })
       },
       add() {
-        if (this.scale === 18) return null
-        this.scale = this.scale + 1
+        this.mapCtx.getCenterLocation({
+          success: (res) => {
+            this.locationInfo.latitude = res.latitude
+            this.locationInfo.longitude = res.longitude
+            this.$apply()
+            if (this.scale === 18) return null
+            this.scale = this.scale + 1
+          }
+        })
       },
       reduce() {
-        if (this.scale === 5) return null
-        this.scale = this.scale - 1
+        this.mapCtx.getCenterLocation({
+          success: (res) => {
+            this.locationInfo.latitude = res.latitude
+            this.locationInfo.longitude = res.longitude
+            this.$apply()
+            if (this.scale === 5) return null
+            this.scale = this.scale - 1
+          }
+        })
       }
     }
     // 小程序获取定位 接口有延迟
     async GetLastPositionSmallToMap() {
-      Tips.locationing()
-      let res = await this.GetLastPositionSmall(this.isDefaultFixingInfo)
-      this.locationInfo = res
-      this.markers = [res]
-      this.$apply()
-      this.mapCtx.translateMarker({
-        markerId: 0,
-        autoRotate: true,
-        destination: {
-          latitude: res.latitude,
-          longitude: res.longitude
-        },
-        animationEnd() {
-          Tips.locationed()
-        }
-      })
     }
     // 首次进入界面获取历史定位数据
     async GetLastPositionToMap() {
-      Tips.locationing()
-      // 获取默认设备最后定位经纬度
-      let res = await this.GetLastPosition(this.isDefaultFixingInfo)
-      this.locationInfo = res
-      this.markers = [res]
-      this.isFirst = false
-      this.$apply()
-      Tips.locationed()
     }
     async onLoad() {
       // 授权获取用户数据
@@ -214,19 +238,29 @@
       this.mapCtx = Wepy.createMapContext('myMap')
     }
     async onShow() {
-      // 用户是否登录 & 首次进入界面获取 API -> GetLastPosition
-      if (this.userInfo && this.isFirst) {
+      // 用户是否登录 & 进入界面获取 API -> GetLastPosition
+      if (this.userInfo) {
+        Tips.locationing()
         // 获取最后历史定位
-        let res = await this.GetBindinginfo()
-        this.fixingsInfo = res.data
+        let fixingsInfo = await this.GetBindinginfo()
+        this.fixingsInfo = fixingsInfo.data
         this.$apply()
-        await this.GetLastPositionToMap()
-      } else if (this.userInfo && this.isDefaultFixingInfo && !this.isFirst) {
-        // res 返回 数据 获取定位
-        let res = await this.GetBindinginfo()
-        this.fixingsInfo = res.data
+        // 获取默认设备最后定位经纬度
+        let markers = await this.GetLastPosition(this.isDefaultFixingInfo)
+        this.locationInfo = {...markers}
+        this.markers = [{...markers}]
         this.$apply()
-        await this.GetLastPositionSmallToMap()
+        Tips.locationed()
+        this.mapCtx.translateMarker({
+          markerId: 0,
+          autoRotate: true,
+          duration: 1000,
+          rotate: 90,
+          destination: {
+            latitude: markers.latitude,
+            longitude: markers.longitude
+          }
+        })
       }
     }
   }

@@ -5,36 +5,50 @@
     overflow: hidden;
   }
 }
+.weui-cell{
+  @extend .weui-cell;
+  &:before{
+    border-top: none;
+  }
+}
+.weui-cells{
+  @extend .weui-cells;
+  background-color: #FAFAFA;
+}
 </style>
 
 <template>
-  <view class='column mt20 mb20 ml20 mr20' style="height:100%">
-    <view>
-      <view class="user-info column-center mb20">
-        <image class="icon-big mb20" src="{{userInfo.Icon}}" />
-        <text class="xxl">{{userInfo.NickName}}</text>
+  <view class="column-around" style="height:100%">
+    <view class="user-info column-center mb20" style="flex:1">
+      <image class="icon-big mb20" src="{{userInfo.Icon}}" />
+      <text class="xxl">{{userInfo.NickName}}</text>
+    </view>
+    <view class="weui-cells weui-cells_after-title" style="flex:2">
+      <navigator 
+        class="weui-cell weui-cell_access" 
+        hover-class="weui-cell_active"
+        wx:for="{{list}}" 
+        wx:key="index" 
+        wx:for-index="index" 
+        wx:for-item="item" 
+        url="{{item.url}}">
+        <view
+          class="weui-cell__hd mr20">
+          <image class="icon" src="{{item.iconPath}}" />
+        </view>
+        <view class="weui-cell__bd pt10 pb10">
+          <text class="lg normal">{{item.text}}</text>
+        </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+      <view class="weui-footer weui-footer_fixed-bottom">
+        <button 
+        class="ml20 mr20 mt20 mb20" 
+        type="primary"
+        @tap="phoneLogout"
+        >退出账号</button>
       </view>
-      <view class="weui-cells weui-cells_after-title">
-        <navigator 
-          class="weui-cell weui-cell_access" 
-          hover-class="weui-cell_active"
-          wx:for="{{list}}" 
-          wx:key="index" 
-          wx:for-index="index" 
-          wx:for-item="item" 
-          url="{{item.url}}">
-          <view
-            wx:if="{{item.icon}}" 
-            class="weui-cell__hd">
-            <image 
-              src="{{item.iconPath}}" 
-              style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;" />
-          </view>
-          <view class="weui-cell__bd pt10 pb10">
-            <text class="lg normal">{{item.text}}</text>
-          </view>
-        </navigator>
-      </view>
+       
     </view>
   </view>
 </template>
@@ -42,8 +56,9 @@
 <script>
   import Wepy from 'wepy'
   import Base from 'mixins/base'
+  import Login from 'mixins/login'
   export default class GetMeInfo extends Wepy.page {
-    mixins = [Base]
+    mixins = [Base, Login]
     config = {
       navigationBarTitleText: '个人信息'
     }
@@ -53,19 +68,19 @@
           text: '我的设备',
           url: '../fixing/GetBindinginfo',
           icon: false,
-          iconPath: ''
+          iconPath: './assets/myfixing.png'
         },
         {
           text: '功能介绍',
           url: '../use/UseApp',
           icon: false,
-          iconPath: ''
+          iconPath: './assets/useapp.png'
         },
         {
           text: '常见问题',
           url: '../faq/FAQ',
           icon: false,
-          iconPath: ''
+          iconPath: './assets/faq.png'
         }
       ],
       userInfo: {
