@@ -65,7 +65,7 @@ export default class base extends Wepy.mixin {
     if (Now.yyyy === Time.yyyy && Now.mm === Time.mm && (Now.dd - 1) === Time.dd) {
       return `昨天${this.ToPad(HHMMSS.hh)}:${this.ToPad(HHMMSS.mm)}`
     }
-    return `${Time.mm}-${this.ToPad(Time.dd)} ${this.ToPad(HHMMSS.hh)}:${this.ToPad(HHMMSS.mm)}`
+    return `${this.ToPad(Time.mm)}-${this.ToPad(Time.dd)} ${this.ToPad(HHMMSS.hh)}:${this.ToPad(HHMMSS.mm)}`
   }
   // 调用微信扫码api
   async GetQRCode() {

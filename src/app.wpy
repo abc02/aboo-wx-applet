@@ -29,17 +29,7 @@
       }
     }
     globalData = {
-      userInfo: {
-        BindingNum: 4,
-        Ciphertext: 'dd4ee2486c48709a066606b27b8835b0',
-        Icon: 'https://abuimg.0577xiedu.net/abupaopao/icon/2.png?59',
-        JwtToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIyIiwiZXhwIjoxNTE2NTk5NDIzfQ.35e2-d2MpQWOCdicYCo5h33AWPFodPSE1PedZNs_Iic',
-        NickName: 'Cherry',
-        UserId: 2,
-        code: '登录成功',
-        ret: 1001
-      },
-      // userInfo: null,
+      userInfo: null,
       locationInfo: null
     }
     constructor() {

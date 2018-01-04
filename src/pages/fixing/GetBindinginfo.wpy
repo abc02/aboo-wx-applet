@@ -43,10 +43,11 @@
         </WepySwipe>
       </repeat>
     </view>
-    <view class="mt20 mb20 mr20 ml20" >
+    <view class="mt20 mb20 mr20 ml20 weui-footer_fixed-bottom" >
     <button 
         type="primary"
         @tap="bindingFixing"
+        disabled="{{isDisabled}}"
         >添加新设备</button>
       </view>
   </view>
@@ -66,6 +67,9 @@
     components = {
       WepySwipe
     }
+    data = {
+      isDisabled: false
+    }
     methods = {
       currentTs(id) {
         this.fixingsInfo.forEach(item => {
@@ -74,22 +78,11 @@
           }
         })
       },
-      async unbind(fixing) {
-        Tips.loading()
-        let res = await this.Unbind(fixing)
-        Tips.loaded()
-        if (res.ret !== 1001) return Tips.toast(res.code)
-        Tips.toast(res.code)
-        this.GetBindinginfoToWepySwipe()
+      unbind(fixing) {
+        this.Unbind(fixing)
       },
-      async updateFixingIsDefault(fixing) {
-        Tips.loading()
-        let res = await this.UpdateFixingIsDefault(fixing)
-        Tips.loaded()
-        if (res.ret !== 1001) return Tips.toast(res.code)
-        Tips.toast(res.code)
-        // 重新获取用户绑定的设备数据
-        this.GetBindinginfoToWepySwipe()
+      updateFixingIsDefault(fixing) {
+        this.UpdateFixingIsDefault(fixing)
       },
       bindingFixing() {
         this.BindingFixing()
@@ -106,7 +99,7 @@
         this.$apply()
         return
       }
-      let array = Array.from(res.data) // 转换数据
+      let array = Array.from(res.data) // 伪数组 -> 数据
       array.forEach(item => {
         item.style = 0
       })
@@ -116,6 +109,11 @@
     }
     onLoad() {
       this.GetBindinginfoToWepySwipe()
+    }
+    onShow() {
+      if (this.fixingsInfo && this.fixingsInfo.length >= 5) {
+        this.isDisabled = true
+      }
     }
   }
 </script>

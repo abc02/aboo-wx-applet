@@ -83,12 +83,11 @@ export default class Fixing extends Wepy.mixin {
   }
   // 获取设备定位数据
   async GetLastPositionSmall(fixing) {
-    let FixingLocationInfo 
+    let FixingLocationInfo
     try {
       FixingLocationInfo = await FixingService.GetLastPositionSmall(this.JoinFixingRequest(fixing))
       return await this.GetLastPositonResponse(FixingLocationInfo)
-    }
-    catch (err) {
+    } catch (err) {
       FixingLocationInfo = {ret: 1002}
       return await this.GetLastPositonResponse(FixingLocationInfo)
     }
@@ -178,11 +177,29 @@ export default class Fixing extends Wepy.mixin {
   }
   // 设备解绑
   async Unbind(fixing) {
-    return await FixingService.Unbind(this.JoinFixingRequest(fixing))
+    Tips.loading()
+    let res = await FixingService.Unbind(this.JoinFixingRequest(fixing))
+    Tips.loaded()
+    let dialog = await this.Toast(res.code)
+    if (dialog.confirm) {
+      // 1001  解绑成功
+      if (res.ret === 1001) return this.GetBindinginfoToWepySwipe()  // 重新获取用户绑定的设备数据
+    }
   }
   // 设备默认
   async UpdateFixingIsDefault(fixing) {
-    return await FixingService.UpdateFixingIsDefault(this.JoinFixingRequest(fixing))
+    Tips.loading()
+    let res = await FixingService.UpdateFixingIsDefault(this.JoinFixingRequest(fixing))
+    Tips.loaded()
+    let dialog = await this.Toast(res.code)
+    if (dialog.confirm) {
+      // 1001  设置成功
+      if (res.ret === 1001) {
+        Wepy.reLaunch({
+          url: '../index/Index'
+        })
+      }
+    }
   }
   methods = {
     async addBinding(fixing) {

@@ -6,7 +6,7 @@
   right: 0;
   background-color: rgba($color: #ffffff, $alpha: 1);
   display: flex;
- justify-content: space-around;
+  flex-direction: row;
 }
 .fixed-bottom{
   @extend .fixed-bottom;
@@ -18,20 +18,46 @@
   transform: translateY(-50%);
   right: 20rpx;
 }
-.fixing__info{
+.locationInfo{
+  flex: 3;
+}
+.fixininfo{
+  flex: 2;
   display: flex;
-  flex-direction: row;
-  .battery{
-    width: 58rpx;
-    height: 24rpx;
-    overflow: visible;
-  }
-  .fixing{
-    position: relative;
-    left: -5rpx;
+  .battery-container {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    align-items: stretch;
+    .battery{
+      flex: 1;
+      .battery-image {
+          width: 58rpx;
+          height: 24rpx;
+          overflow: visible;
+        }
+    }
+    .creatTime {
+      line-height: 2.2;
+      text-align: center;
+      flex: 1;
+    }
+  }
+  .fixing-container {
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    .icon-image {
+      flex:1;
+      display: flex;
+      align-items: center;
+      justify-content:center;
+    }
+    .icon-text {
+      text-align: center;
+    }
   }
 }
 .mode{
@@ -52,43 +78,34 @@
       longitude="{{locationInfo.longitude}}" 
       controls="{{controls}}"
       markers="{{markers}}" >
-      <cover-view class="controls fixed-top pl20 pt20 pb20 pr20"
-        wx-if="{{locationInfo.MachineCode}}"
-        >
-        <cover-view class="weui-cell__bd column-around">
-          <cover-view class="big bold" wx:if="{{locationInfo.address_reference.landmark_l1}}">{{locationInfo.address_reference.landmark_l1.title}}</cover-view>
-          <cover-view class="big bold" wx:else>{{locationInfo.address_reference.landmark_l2.title}}</cover-view>
-          <cover-view class="row mt20">
-            <cover-view class="mr10">
-              <cover-image class="mode" wx:if="{{locationInfo.Mode === 'LBS'}}" src="./assets/lbs-small.png"/>
-              <cover-image class="mode" wx:if="{{locationInfo.Mode === 'GPS'}}" src="./assets/gps-small.png"/>
-              <cover-image class="mode" wx:if="{{locationInfo.Mode === 'WIFI'}}" src="./assets/wifi-small.png"/>
-            </cover-view>
-            <cover-view class="weak mr10">精度{{locationInfo.Radius}}米</cover-view>
-            <cover-view class="sm weak">{{locationInfo.address_component.district}}{{locationInfo.address_component.street_number}}</cover-view>
+      <cover-view class="controls fixed-top pl20 pt20 pb20 pr20" wx-if="{{locationInfo.MachineCode}}">
+        <cover-view class="locationInfo column-stretch">
+          <cover-view class="big bold inline" @tap="address">{{address}}</cover-view>
+          <cover-view class="row mt20" @tap="deetailedAddress">
+            <cover-image class="mode mr10" src="{{mode}}" />
+            <cover-view class="xs weak mr10">{{radius}}</cover-view>
+            <cover-view class="xs weak inline">{{deetailedAddress}}</cover-view>
           </cover-view>
         </cover-view>
-        <cover-view class="fixing__info">
-          <cover-view class="mr10 column-around small">
-            <cover-view class="weak row-center" wx:if="{{Battery}}">
+        <cover-view class="fixininfo">
+          <cover-view class="battery-container column-around small">
+            <cover-view class="battery weak row-center" wx:if="{{battery}}">
               <cover-view class="mr10">
-                <cover-image class="battery" wx:if="{{Battery > 0 && Battery <= 10 }}" src="./assets/battery/10.png"/>
-                <cover-image class="battery" wx:if="{{Battery > 10 && Battery <= 20 }}" src="./assets/battery/20.png"/>
-                <cover-image class="battery" wx:if="{{Battery > 20 && Battery <= 35 }}" src="./assets/battery/35.png"/>
-                <cover-image class="battery" wx:if="{{Battery > 35 && Battery <= 50 }}" src="./assets/battery/50.png"/>
-                <cover-image class="battery" wx:if="{{Battery > 50 && Battery <= 70 }}" src="./assets/battery/70.png"/>
-                <cover-image class="battery" wx:if="{{Battery > 70 && Battery <= 90 }}" src="./assets/battery/90.png"/>
-                <cover-image class="battery" wx:if="{{Battery > 90 && Battery <= 100 }}" src="./assets/battery/100.png"/>
+                <cover-image class="battery-image"  src="{{battery.iconPath}}"/>
               </cover-view>
-              <cover-view class="xs">{{locationInfo.Battery}}%</cover-view>
+              <cover-view class="xs">{{battery.battery}}</cover-view>
             </cover-view>
-            <cover-view class="creatTime primary mt20" wx:if="{{CreatTime}}">
-              {{CreatTime}}
+            <cover-view class="creatTime primary mt20" wx:if="{{creatTime}}">
+              {{creatTime}}
             </cover-view>
           </cover-view>
-          <cover-view class="fixing column-around xs">
-            <cover-image class="icon-lg" src="{{isDefaultFixingInfo.fixingIcon}}"/>
-            <cover-view class="pl10 pr10">{{isDefaultFixingInfo.fixingName}}</cover-view>
+          <cover-view class="fixing-container column-around xs">
+            <cover-view class="icon-image">
+              <cover-image class="icon-lg" src="{{fixing.iconPath}}"/>
+            </cover-view>
+            <cover-view class="icon-text xs mt10">
+              {{fixing.fixingName}}
+            </cover-view>
           </cover-view>
         </cover-view>
       </cover-view>
@@ -157,13 +174,57 @@
         }
         return null
       },
-      Battery() {
-        if (this.locationInfo && this.locationInfo.Battery) {
-          return Number.parseInt(this.locationInfo.Battery)
+      fixing() {
+        if (this.isDefaultFixingInfo) {
+          return {
+            iconPath: this.isDefaultFixingInfo.fixingIcon,
+            fixingName: this.isDefaultFixingInfo.fixingName
+          }
         }
         return null
       },
-      CreatTime() {
+      radius() {
+        if (this.locationInfo && this.locationInfo.Radius) {
+          return `精度${this.locationInfo.Radius}米`
+        }
+        return null
+      },
+      deetailedAddress() {
+        if (this.locationInfo && this.locationInfo.address_component) {
+          return `${this.locationInfo.address_component.district}${this.locationInfo.address_component.street_number}`
+        }
+        return null
+      },
+      address() {
+        if (this.locationInfo && this.locationInfo.address_reference) {
+          if (this.locationInfo.address_reference.landmark_l1) return this.locationInfo.address_reference.landmark_l1.title
+          if (this.locationInfo.address_reference.landmark_l2) return this.locationInfo.address_reference.landmark_l2.title
+        }
+        return null
+      },
+      mode() {
+        if (this.locationInfo && this.locationInfo.Mode) {
+          let Mode = this.locationInfo.Mode
+          if (Mode === 'LBS') return './assets/lbs-small.png'
+          if (Mode === 'GPS') return './assets/gps-small.png'
+          if (Mode === 'WIFI') return './assets/wifi-small.png'
+        }
+        return null
+      },
+      battery() {
+        if (this.locationInfo && this.locationInfo.Battery) {
+          let Battery = Number.parseInt(this.locationInfo.Battery)
+          if (Battery > 0 && Battery <= 10) return {battery: `${Battery}%`, iconPath: './assets/battery/10.png'}
+          if (Battery > 10 && Battery <= 20) return {battery: `${Battery}%`, iconPath: './assets/battery/20.png'}
+          if (Battery > 20 && Battery <= 35) return {battery: `${Battery}%`, iconPath: './assets/battery/35.png'}
+          if (Battery > 35 && Battery <= 50) return {battery: `${Battery}%`, iconPath: './assets/battery/50.png'}
+          if (Battery > 50 && Battery <= 70) return {battery: `${Battery}%`, iconPath: './assets/battery/70.png'}
+          if (Battery > 70 && Battery <= 90) return {battery: `${Battery}%`, iconPath: './assets/battery/90.png'}
+          if (Battery > 90 && Battery <= 100) return {battery: `${Battery}%`, iconPath: './assets/battery/100.png'}
+        }
+        return null
+      },
+      creatTime() {
         if (this.locationInfo && this.locationInfo.CreatTime) {
           let date = Number.parseInt(this.locationInfo.CreatTime + '000')
           let creatTime = this.ToTodayOrYesterday(date)
@@ -173,6 +234,12 @@
       }
     }
     methods = {
+      address() {
+        this.Toast(this.address)
+      },
+      deetailedAddress() {
+        this.Toast(this.deetailedAddress)
+      },
       // 将地图中心移动到当前定位点，需要配合map组件的show-location使用
       moveToLocation() {
         this.mapCtx.moveToLocation()
@@ -180,20 +247,25 @@
       async getLastPositionSmall() {
         Tips.locationing()
         let markers = await this.GetLastPositionSmall(this.isDefaultFixingInfo)
-        this.locationInfo = {...markers}
-        this.markers = [{...markers}]
-        this.$apply()
         Tips.locationed()
-        this.mapCtx.translateMarker({
-          markerId: 0,
-          autoRotate: true,
-          duration: 1000,
-          rotate: 90,
-          destination: {
-            latitude: markers.latitude,
-            longitude: markers.longitude
-          }
-        })
+        console.log(markers)
+        if (markers) {
+          this.locationInfo = {...markers}
+          this.markers = [{...markers}]
+          this.$apply()
+          this.mapCtx.translateMarker({
+            markerId: 0,
+            autoRotate: true,
+            duration: 1000,
+            rotate: 90,
+            destination: {
+              latitude: markers.latitude,
+              longitude: markers.longitude
+            }
+          })
+        } else {
+          this.Toast('定位失败，请重新尝试')
+        }
       },
       toGetMeInfo() {
         Wepy.navigateTo({
@@ -223,12 +295,6 @@
         })
       }
     }
-    // 小程序获取定位 接口有延迟
-    async GetLastPositionSmallToMap() {
-    }
-    // 首次进入界面获取历史定位数据
-    async GetLastPositionToMap() {
-    }
     async onLoad() {
       // 授权获取用户数据
       this.userInfo = this.$parent.GetUserInfo()
@@ -241,7 +307,6 @@
       // 用户是否登录 & 进入界面获取 API -> GetLastPosition
       if (this.userInfo) {
         Tips.locationing()
-        // 获取最后历史定位
         let fixingsInfo = await this.GetBindinginfo()
         this.fixingsInfo = fixingsInfo.data
         this.$apply()
@@ -259,6 +324,8 @@
           destination: {
             latitude: markers.latitude,
             longitude: markers.longitude
+          },
+          animationEnd() {
           }
         })
       }

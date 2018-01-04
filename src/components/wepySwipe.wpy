@@ -140,7 +140,7 @@
       },
       async updateFixingIsDefault(fixing) {
         delete fixing.style
-        let content = `您确认将${fixing.fixingName}设置为默认吗?`
+        let content = `您确认是否切换该${fixing.fixingName}设备为默认吗?`
         let res = await wepy.showModal({
           title: '提醒',
           content,
