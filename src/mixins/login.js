@@ -37,7 +37,6 @@ export default class testMixin extends Wepy.mixin {
       if (dialog.confirm) {
         // 1001 注册成功 1002 该手机号码已被使用 1003
         if (res.ret === 1001) return Wepy.navigateBack()
-        if (res.ret === 1002) return Wepy.navigateBack()
       }
     },
     async phonePasswordGet(data) {

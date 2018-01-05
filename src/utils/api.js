@@ -4118,7 +4118,7 @@ let swagger = {
   ]
 }
 let url = {}
-const host = 'https://abuapi.0577xiedu.net/v1'
+const host = 'https://datainterface.abpao.com/v1'
 
 for (let key in swagger.paths) {
   if (swagger.paths.hasOwnProperty(key)) {

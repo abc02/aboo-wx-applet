@@ -15,7 +15,7 @@ swiper{
       <view>
         <text class="lg normal">{{itemKey.title}}</text>
       </view>
-      <view class="mt10 ml20" wx:for="{{itemKey.text}}" wx:key="key" wx:for-index="txtIndex" wx:for-item="txt">
+      <view class="mt10 ml20" wx:if="{{itemKey.text}}" wx:for="{{itemKey.text}}" wx:key="key" wx:for-index="txtIndex" wx:for-item="txt">
            <text class="sm muted">{{txt}}</text>
       </view>
       <view class="row-center" wx:if="{{itemKey.swiper}}">
@@ -49,6 +49,18 @@ swiper{
           ]
         },
         {
+          title: '更改管理员（该功能限APP内使用）',
+          text: [
+            '如需更改设备管理员，在绑定列表界面选择一位用户，向左滑动点击“转让”按钮，当新管理员收到通知时，说明管理员权限转让成功。'
+          ]
+        },
+        {
+          title: '移除成员（仅管理员有移除权限，该功能限APP内使用）',
+          text: [
+            '进入“绑定列表”界面，移除成员时，选择需要移除的成员，点击移除，被移除成员将会收到通知。'
+          ]
+        },
+        {
           title: '获取位置',
           text: [
             '设备会根据用户设置的模式（省电模式：1小时，非省电模式：3分钟）进行自动上传位置信息。用户也可点击获取位置按钮，获取设备当前所在位置信息。'
@@ -58,6 +70,18 @@ swiper{
           title: '设备状态',
           text: [
             '正在初始化，设备已关机。两种状态'
+          ]
+        },
+        {
+          title: '设置安全守护（该功能限APP内使用）',
+          text: [
+            '进入“安全守护”界面，点击“添加围栏”选择围栏位置和围栏大小，选择好点击下一步，设置围栏名称，即可添加成功。'
+          ]
+        },
+        {
+          title: '历史轨迹（该功能限APP内使用）',
+          text: [
+            '进入“历史轨迹”界面，选择日期查看轨迹。'
           ]
         }
       ]

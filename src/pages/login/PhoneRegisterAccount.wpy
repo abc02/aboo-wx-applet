@@ -29,10 +29,9 @@
         disabled="{{isDisabled}}"
         @tap="phoneRegisterAccount({{input}})"
         >注册</button>
-       
       </view>
-       <view class="mt10 ml10">
-          <text class="sm muted">完成注册代表你已同意</text><text class="sm primary">《阿布跑跑用户协议》</text>
+       <view class="row mt10 ml10">
+          <text class="sm muted">完成注册代表你已同意</text><navigator url="./Agreement" class="sm primary">《阿布跑跑用户协议》</navigator>
         </view>
     </panel>
   </view>

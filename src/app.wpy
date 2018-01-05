@@ -13,6 +13,7 @@
         'pages/login/PhoneLoginAccount',
         'pages/login/PhoneRegisterAccount',
         'pages/login/PhonePasswordGet',
+        'pages/login/Agreement',
         'pages/user/GetMeInfo',
         'pages/fixing/AddBinding',
         'pages/fixing/GetBindinginfo',
