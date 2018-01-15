@@ -1,4 +1,4 @@
-import wepy from 'wepy'
+import Wepy from 'wepy'
 // HTTP工具类
 export default class http {
   static async request (method, url, data) {
@@ -10,7 +10,7 @@ export default class http {
       header: header
     }
     // Tips.loading()
-    let res = await wepy.request(param)
+    let res = await Wepy.request(param)
     if (this.isSuccess(res)) {
       return res.data
     } else {
@@ -54,7 +54,7 @@ export default class http {
     const header = {}
     header['accept'] = 'application/json'
     header['content-type'] = 'application/x-www-form-urlencoded'
-    let userInfo = wepy.$instance.globalData.userInfo
+    let userInfo = Wepy.$instance.globalData.userInfo
     if (userInfo) {
       header['Authorization'] = userInfo.JwtToken
     }

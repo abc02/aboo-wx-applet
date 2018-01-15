@@ -65,7 +65,7 @@
     data = {
       list: [
         {
-          text: '我的设备',
+          text: '我的鞋垫',
           url: '../fixing/GetBindinginfo',
           icon: false,
           iconPath: './assets/myfixing.png'
@@ -87,8 +87,8 @@
         NickName: '加载中'
       }
     }
-    onLoad() {
-      this.userInfo = this.$parent.GetUserInfo()
+    async onLoad() {
+      this.userInfo = await this.$parent.GetUserInfo()
     }
   }
 </script>

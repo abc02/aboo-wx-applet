@@ -1,6 +1,6 @@
 <template>
   <view class="mt20 mb20 ml20 mr20">
-    <view class="weui-cells__title" slot="title">添加新设备</view>
+    <view class="weui-cells__title" slot="title">添加新鞋垫</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
         <view class="weui-cell__bd">
@@ -29,14 +29,14 @@
   export default class AddBinding extends Wepy.page {
     mixins = [Base, Input, Fixing]
     config = {
-      navigationBarTitleText: '绑定设备'
+      navigationBarTitleText: '绑定鞋垫'
     }
     data = {
       id: 'fixingPassword',
       type: 'fixingPassword',
       isPassword: true,
       isFocus: true,
-      placeholder: '请输入设备密码'
+      placeholder: '请输入鞋垫密码'
     }
     onLoad(fixing) {
       this.input['fixingId'] = fixing.fixingIdCipher

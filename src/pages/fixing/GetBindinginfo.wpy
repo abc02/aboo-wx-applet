@@ -11,7 +11,7 @@
   <view class="column-between" style="height:100%">
     <view wx:if="{{fixingsInfo}}" >
       <view wx:if="{{fixingsInfo.length > 0}}" class="mt10 mb10 ml10 mr10">
-        <text class="muted sm">已绑定的设备:</text>
+        <text class="muted sm">已绑定的鞋垫:</text>
       </view>
       <repeat 
         for="{{fixingsInfo}}"
@@ -31,8 +31,8 @@
                   <image class="icon-lg" src="{{item.fixingIcon}}" />
                 </view>
               <view class="weui-cell__bd column-around">
-                  <text class="lg mb20">设备昵称:{{item.fixingName}}</text>
-                  <text class="sm muted">设备ID:{{item.fixingId}}</text>
+                  <text class="lg mb20">鞋垫昵称:{{item.fixingName}}</text>
+                  <text class="sm muted">鞋垫ID:{{item.fixingId}}</text>
               </view>
               <view class="weui-cell__ft" wx:if="{{item.isDefault === '1'}}">
                 <image class="icon" src="./assets/icon_default.png" />
@@ -48,7 +48,7 @@
         type="primary"
         @tap="bindingFixing"
         disabled="{{isDisabled}}"
-        >添加新设备</button>
+        >添加新鞋垫</button>
       </view>
   </view>
 </template>
@@ -62,7 +62,7 @@
   export default class GetBindinginfo extends Wepy.page {
     mixins = [Base, Fixing]
     config = {
-      navigationBarTitleText: '我的设备'
+      navigationBarTitleText: '我的鞋垫'
     }
     components = {
       WepySwipe

@@ -20,6 +20,12 @@
 }
 .locationInfo{
   flex: 3;
+  .deetailedAddress{
+    display: flex;
+    .inline{
+      flex:1;
+    }
+  }
 }
 .fixininfo{
   flex: 2;
@@ -54,6 +60,10 @@
       display: flex;
       align-items: center;
       justify-content:center;
+      .icon-lg{
+        overflow: hidden;
+        border-radius: 15px;
+      }
     }
     .icon-text {
       text-align: center;
@@ -80,8 +90,8 @@
       markers="{{markers}}" >
       <cover-view class="controls fixed-top pl20 pt20 pb20 pr20" wx-if="{{locationInfo.MachineCode}}">
         <cover-view class="locationInfo column-stretch">
-          <cover-view class="big bold inline" @tap="address">{{address}}</cover-view>
-          <cover-view class="row mt20" @tap="deetailedAddress">
+          <cover-view class="big bold inline address" @tap="address">{{address}}</cover-view>
+          <cover-view class="row mt20 deetailedAddress" @tap="deetailedAddress">
             <cover-image class="mode mr10" src="{{mode}}" />
             <cover-view class="xs weak mr10">{{radius}}</cover-view>
             <cover-view class="xs weak inline">{{deetailedAddress}}</cover-view>
@@ -89,7 +99,7 @@
         </cover-view>
         <cover-view class="fixininfo">
           <cover-view class="battery-container column-around small">
-            <cover-view class="battery weak row-center" wx:if="{{battery}}">
+            <cover-view class="battery weak row-center" wx:if="{{battery && locationInfo.Shutdown === '1'}}">
               <cover-view class="mr10">
                 <cover-image class="battery-image"  src="{{battery.iconPath}}"/>
               </cover-view>
@@ -248,8 +258,8 @@
         Tips.locationing()
         let markers = await this.GetLastPositionSmall(this.isDefaultFixingInfo)
         Tips.locationed()
-        console.log(markers)
-        if (markers) {
+        // Shutdown   0关机  1开机
+        if (markers && markers.Shutdown === '1') {
           this.locationInfo = {...markers}
           this.markers = [{...markers}]
           this.$apply()
@@ -263,8 +273,12 @@
               longitude: markers.longitude
             }
           })
-        } else {
-          this.Toast('定位失败，请重新尝试')
+        } else if (markers && markers.Shutdown === '0') {
+          markers = {...markers, iconPath: './assets/icon_gif_shutdown.png', callout: {...markers.callout, content: '已关机'}}
+          this.locationInfo = {...markers}
+          this.markers = [{...markers}]
+          this.$apply()
+          this.Toast('鞋垫已经关机，无法使用定位功能')
         }
       },
       toGetMeInfo() {
@@ -296,38 +310,40 @@
       }
     }
     async onLoad() {
-      // 授权获取用户数据
-      this.userInfo = this.$parent.GetUserInfo()
     }
     onReady() {
       // 定义myMap上下文
       this.mapCtx = Wepy.createMapContext('myMap')
     }
     async onShow() {
+      // 授权获取用户数据
+      this.userInfo = await this.$parent.GetUserInfo()
       // 用户是否登录 & 进入界面获取 API -> GetLastPosition
       if (this.userInfo) {
         Tips.locationing()
         let fixingsInfo = await this.GetBindinginfo()
-        this.fixingsInfo = fixingsInfo.data
-        this.$apply()
-        // 获取默认设备最后定位经纬度
-        let markers = await this.GetLastPosition(this.isDefaultFixingInfo)
-        this.locationInfo = {...markers}
-        this.markers = [{...markers}]
-        this.$apply()
-        Tips.locationed()
-        this.mapCtx.translateMarker({
-          markerId: 0,
-          autoRotate: true,
-          duration: 1000,
-          rotate: 90,
-          destination: {
-            latitude: markers.latitude,
-            longitude: markers.longitude
-          },
-          animationEnd() {
-          }
-        })
+        if (fixingsInfo) {
+          this.fixingsInfo = fixingsInfo.data
+          this.$apply()
+          // 获取默认设备最后定位经纬度
+          let markers = await this.GetLastPosition(this.isDefaultFixingInfo)
+          this.locationInfo = {...markers}
+          this.markers = [{...markers}]
+          this.$apply()
+          Tips.locationed()
+          this.mapCtx.translateMarker({
+            markerId: 0,
+            autoRotate: true,
+            duration: 1000,
+            rotate: 90,
+            destination: {
+              latitude: markers.latitude,
+              longitude: markers.longitude
+            },
+            animationEnd() {
+            }
+          })
+        }
       }
     }
   }

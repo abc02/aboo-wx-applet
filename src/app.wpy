@@ -4,9 +4,9 @@
 </style>
 
 <script>
-  import wepy from 'wepy'
+  import Wepy from 'wepy'
   import 'wepy-async-function'
-  export default class extends wepy.app {
+  export default class extends Wepy.app {
     config = {
       pages: [
         'pages/index/Index',
@@ -26,7 +26,7 @@
         navigationBarTextStyle: 'white'
       },
       networkTimeout: {
-        request: 20000
+        request: 60000
       }
     }
     globalData = {
@@ -39,13 +39,20 @@
       this.use('promisify')
     }
     // 获取用户信息
-    GetUserInfo() {
-      if (this.globalData.userInfo) {
-        return this.globalData.userInfo
+    async GetUserInfo() {
+      try {
+        let res = await Wepy.getStorage({
+          key: 'userInfo'
+        })
+        if (res.data) {
+          this.globalData.userInfo = res.data
+          return res.data
+        }
+      } catch (err) {
+        Wepy.redirectTo({
+          url: '../login/PhoneLoginAccount'
+        })
       }
-      wepy.redirectTo({
-        url: '../login/PhoneLoginAccount'
-      })
     }
     // 获取用户位置
     async GetLocationInfo(type = 'wgs84') {
@@ -53,7 +60,9 @@
         return this.globalData.locationInfo
       }
       // 授权获取位置
-      return await wepy.getLocation({type})
+      return await Wepy.getLocation({
+        type
+      })
     }
   }
 </script>

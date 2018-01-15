@@ -2,15 +2,9 @@ import Wepy from 'wepy'
 import LoginService from '../services/loginService'
 import Tips from '../utils/tips'
 export default class testMixin extends Wepy.mixin {
-  ToIndex(res) {
-    this.$parent.globalData.userInfo = res
+  ToIndex() {
     this.$redirect({
       url: '../index/Index'
-    })
-  }
-  ToPhoneRegisterAccount(res) {
-    this.$navigate({
-      url: './PhoneRegisterAccount'
     })
   }
   async SendSms(data) {
@@ -28,7 +22,12 @@ export default class testMixin extends Wepy.mixin {
       let dialog = await this.Toast(res.code)
       if (dialog.confirm) {
         // 1001 登录成功 1002 手机号未注册 1003 登录超时
-        if (res.ret === 1001) return this.ToIndex(res)
+        if (res.ret === 1001) {
+          await Wepy.setStorage({key: 'userInfo', data: res})
+          Wepy.$instance.globalData.userInfo = res
+          this.$apply()
+          this.ToIndex()
+        }
       }
     },
     async phoneRegisterAccount(data) {
@@ -50,7 +49,7 @@ export default class testMixin extends Wepy.mixin {
     async phoneLogout() {
       let dialog = await this.Toast('您确定要退出账号吗?', '提醒', true)
       if (dialog.confirm) {
-        Wepy.$instance.globalData.userInfo = null
+        await Wepy.clearStorage()
         Wepy.reLaunch({
           url: '../login/PhoneLoginAccount'
         })

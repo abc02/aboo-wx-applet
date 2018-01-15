@@ -29,7 +29,6 @@ export default class base extends Wepy.mixin {
     Minutes = date.getMinutes()
     Seconds = date.getSeconds()
     Milliseconds = date.getMilliseconds()
-    console.log()
     return {
       hh: Hours,
       mm: Minutes,
