@@ -223,14 +223,22 @@
       },
       battery() {
         if (this.locationInfo && this.locationInfo.Battery) {
+          // Charge  1充电中  2没有充电
           let Battery = Number.parseInt(this.locationInfo.Battery)
-          if (Battery > 0 && Battery <= 10) return {battery: `${Battery}%`, iconPath: './assets/battery/10.png'}
-          if (Battery > 10 && Battery <= 20) return {battery: `${Battery}%`, iconPath: './assets/battery/20.png'}
-          if (Battery > 20 && Battery <= 35) return {battery: `${Battery}%`, iconPath: './assets/battery/35.png'}
-          if (Battery > 35 && Battery <= 50) return {battery: `${Battery}%`, iconPath: './assets/battery/50.png'}
-          if (Battery > 50 && Battery <= 70) return {battery: `${Battery}%`, iconPath: './assets/battery/70.png'}
-          if (Battery > 70 && Battery <= 90) return {battery: `${Battery}%`, iconPath: './assets/battery/90.png'}
-          if (Battery > 90 && Battery <= 100) return {battery: `${Battery}%`, iconPath: './assets/battery/100.png'}
+          let Charge = Number.parseInt(this.locationInfo.Charge)
+          if (Charge === 1) {
+            return {battery: `${Battery}%`, iconPath: './assets/battery/battery_full.png'}
+          }
+          if (Charge === 2) {
+            if (Battery > 0 && Battery <= 10) return {battery: `${Battery}%`, iconPath: './assets/battery/10.png'}
+            if (Battery > 10 && Battery <= 20) return {battery: `${Battery}%`, iconPath: './assets/battery/20.png'}
+            if (Battery > 20 && Battery <= 35) return {battery: `${Battery}%`, iconPath: './assets/battery/35.png'}
+            if (Battery > 35 && Battery <= 50) return {battery: `${Battery}%`, iconPath: './assets/battery/50.png'}
+            if (Battery > 50 && Battery <= 70) return {battery: `${Battery}%`, iconPath: './assets/battery/70.png'}
+            if (Battery > 70 && Battery <= 90) return {battery: `${Battery}%`, iconPath: './assets/battery/90.png'}
+            if (Battery > 90 && Battery <= 100) return {battery: `${Battery}%`, iconPath: './assets/battery/100.png'}
+          }
+          return null
         }
         return null
       },
