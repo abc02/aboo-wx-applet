@@ -82,18 +82,20 @@
     <map 
       id="myMap"
       style="width:100%; height:100%;"
-      show-location
+      show-location="{{isShowLocation}}"
       scale="{{scale}}"
       latitude="{{locationInfo.latitude}}" 
       longitude="{{locationInfo.longitude}}" 
       controls="{{controls}}"
-      markers="{{markers}}" >
+      markers="{{markers}}"
+      circles="{{circles}}"
+      >
       <cover-view class="controls fixed-top pl20 pt20 pb20 pr20" wx-if="{{locationInfo.MachineCode}}">
         <cover-view class="locationInfo column-stretch">
           <cover-view class="big bold inline address" @tap="address">{{address}}</cover-view>
           <cover-view class="row mt20 deetailedAddress" @tap="deetailedAddress">
             <cover-image class="mode mr10" src="{{mode}}" />
-            <cover-view class="xs weak mr10">{{radius}}</cover-view>
+            <cover-view class="xs weak mr10">精度{{radius}}米</cover-view>
             <cover-view class="xs weak inline">{{deetailedAddress}}</cover-view>
           </cover-view>
         </cover-view>
@@ -109,7 +111,7 @@
               {{creatTime}}
             </cover-view>
           </cover-view>
-          <cover-view class="fixing-container column-around xs">
+          <cover-view class="fixing-container column-around xs" @tap="redirectToGetBindinginfo">
             <cover-view class="icon-image">
               <cover-image class="icon-lg" src="{{fixing.iconPath}}"/>
             </cover-view>
@@ -147,6 +149,11 @@
           src="./assets/reduce.png"
           @tap="reduce"
         />
+         <cover-image 
+          class="icon-small" 
+          src="./assets/find_child.png"
+          @tap="findChild"
+        />
       </cover-view>
     </map>
   </view>
@@ -163,9 +170,10 @@
       navigationBarTitleText: '阿布跑跑'
     }
     data = {
-      isFirst: true,
+      isShowLocation: false,
       scale: 16, // 默认 16
       markers: null,
+      circles: null,
       locationInfo: {
         latitude: '39.910119', // 当前地图经纬度点，默认定位到北京
         longitude: '116.397983'
@@ -195,20 +203,19 @@
       },
       radius() {
         if (this.locationInfo && this.locationInfo.Radius) {
-          return `精度${this.locationInfo.Radius}米`
+          return Number.parseInt(this.locationInfo.Radius)
         }
         return null
       },
       deetailedAddress() {
-        if (this.locationInfo && this.locationInfo.address_component) {
-          return `${this.locationInfo.address_component.district}${this.locationInfo.address_component.street_number}`
+        if (this.locationInfo && this.locationInfo.address) {
+          return this.locationInfo.address
         }
         return null
       },
       address() {
-        if (this.locationInfo && this.locationInfo.address_reference) {
-          if (this.locationInfo.address_reference.landmark_l1) return this.locationInfo.address_reference.landmark_l1.title
-          if (this.locationInfo.address_reference.landmark_l2) return this.locationInfo.address_reference.landmark_l2.title
+        if (this.locationInfo && this.locationInfo.formatted_addresses) {
+          return this.locationInfo.formatted_addresses.recommend
         }
         return null
       },
@@ -251,6 +258,19 @@
         return null
       }
     }
+    watch = {
+      radius(newValue, oldValue) {
+        if (newValue <= 33) {
+          this.scale = 18
+        }
+        if (newValue > 33 && newValue < 550) {
+          this.scale = 12
+        }
+        if (newValue >= 550) {
+          this.scale = 5
+        }
+      }
+    }
     methods = {
       address() {
         this.Toast(this.address)
@@ -260,6 +280,9 @@
       },
       // 将地图中心移动到当前定位点，需要配合map组件的show-location使用
       moveToLocation() {
+        if (!this.isShowLocation) {
+          this.isShowLocation = true
+        }
         this.mapCtx.moveToLocation()
       },
       async getLastPositionSmall() {
@@ -270,6 +293,8 @@
         if (markers && markers.Shutdown === '1') {
           this.locationInfo = {...markers}
           this.markers = [{...markers}]
+          this.$apply()
+          this.circles = this.setCircles()
           this.$apply()
           this.mapCtx.translateMarker({
             markerId: 0,
@@ -315,9 +340,22 @@
             this.scale = this.scale - 1
           }
         })
+      },
+      findChild() {
+        if (!this.locationInfo && !this.address && !this.deetailedAddress) return
+        Wepy.openLocation({
+          latitude: this.locationInfo.latitude,
+          longitude: this.locationInfo.longitude,
+          scale: 15,
+          name: this.address,
+          address: this.deetailedAddress
+        })
+      },
+      redirectToGetBindinginfo() {
+        this.$navigate({
+          url: '../fixing/GetBindinginfo'
+        })
       }
-    }
-    async onLoad() {
     }
     onReady() {
       // 定义myMap上下文
@@ -330,6 +368,7 @@
       if (this.userInfo) {
         Tips.locationing()
         let fixingsInfo = await this.GetBindinginfo()
+        Tips.locationed()
         if (fixingsInfo) {
           this.fixingsInfo = fixingsInfo.data
           this.$apply()
@@ -338,7 +377,8 @@
           this.locationInfo = {...markers}
           this.markers = [{...markers}]
           this.$apply()
-          Tips.locationed()
+          this.circles = this.setCircles()
+          this.$apply()
           this.mapCtx.translateMarker({
             markerId: 0,
             autoRotate: true,

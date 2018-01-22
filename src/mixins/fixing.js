@@ -130,6 +130,8 @@ export default class Fixing extends Wepy.mixin {
     }
   }
   SetMarkers(message, TencentLocationInfo = null, fixingInfo = null) {
+    let markers
+    this.markers ? markers = this.markers[0] : markers = {...this.locationInfo}
     let res = {
       id: 0,
       iconPath: message.iconPath,
@@ -146,19 +148,6 @@ export default class Fixing extends Wepy.mixin {
       display: 'ALWAYS',
       textAlign: 'center'
     }
-    let label = {
-      content: message.message,
-      fontSize: 16,
-      x: -30,
-      y: -80,
-      borderWidth: 1,
-      borderColor: '#f3f3f3',
-      borderRadius: 6,
-      bgColor: '#ffffff',
-      padding: 3
-    }
-    let markers
-    this.markers ? markers = this.markers[0] : markers = {...this.locationInfo}
     if (TencentLocationInfo && fixingInfo) {
       res = {
         ...res,
@@ -177,6 +166,19 @@ export default class Fixing extends Wepy.mixin {
     }
     return res
   }
+  setCircles() {
+    let markers
+    this.markers ? markers = this.markers[0] : markers = {...this.locationInfo}
+    let circles = [{
+      latitude: markers.latitude,
+      longitude: markers.longitude,
+      color: '#ffffffFF',
+      fillColor: '#8ce0ff40',
+      radius: markers.Radius ? Number.parseInt(markers.Radius) : 15,
+      strokeWidth: 0.5
+    }]
+    return circles
+  }
   // 调用接口 latitude, longitude 百度 -> 腾讯
   GetBaiduToTencentLocationInfo(locationInfo) {
     // "120.61785902045,28.028979000195" = > ['120.61785902045', '28.028979000195']
@@ -188,6 +190,8 @@ export default class Fixing extends Wepy.mixin {
           longitude: locationInfoArr[0]
         },
         coord_type: 3,
+        get_poi: 1,
+        poi_options: 'page_index=1',
         success: function(res) {
           resolve(res)
         },
