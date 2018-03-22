@@ -6,18 +6,43 @@
         <view class="weui-cell__bd">
            <input 
               class="weui-input" 
-              id="{{id}}" 
-              name="{{id}}" 
-              type="{{type}}" 
-              password="{{isPassword}}" 
-              focus="{{isFocus}}" 
-              placeholder="{{placeholder}}"
+              id="fixingPassword" 
+              name="fixingPassword" 
+              type="fixingPassword" 
+              password
+              focus 
+              placeholder="请输入鞋垫密码"
               @input="onInput"
               />
         </view>
       </view>
-      <button class="mt20" type="primary" disabled="{{isDisabled}}" @tap="addBinding({{input}})">确认</button>
     </view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell weui-cell_select">
+          <view class="weui-cell__hd weui-cell__hd_in-select-after">
+              <view class="weui-label">家庭关系</view>
+          </view>
+          <view class="weui-cell__bd">
+              <picker @change="bindPickerChange" value="{{index}}" range="{{familys}}" id="relation">
+                  <view class="weui-select weui-select_in-select-after" style="border-right:none;">{{input['relation'] ? input['relation'] : '请选择' }}</view>
+              </picker>
+          </view>
+      </view>
+    </view>
+    <wxc-dialog class="wxc-dialog" title="请输入家庭关系" confirm-text="完成" confirm-color="#f6655e" cancel-text="取消" bindconfirm="onConfirm" bindcancel="onCancel">
+      <input 
+        class="weui-input"
+        id="relation" 
+        naem="relation"
+        type="relation"
+        placeholder="输入完点击完成"
+        focus 
+        @input="onInput" />
+    </wxc-dialog>
+     <wxc-toast
+    is-show="{{show}}"
+    text="请输入内容"></wxc-toast>
+    <button class="mt20" type="primary" disabled="{{isDisabled}}" @tap="addBinding({{input}})" >确认</button>
   </view>
 </template>
 
@@ -29,17 +54,58 @@
   export default class AddBinding extends Wepy.page {
     mixins = [Base, Input, Fixing]
     config = {
-      navigationBarTitleText: '绑定鞋垫'
+      navigationBarTitleText: '绑定鞋垫',
+      usingComponents: {
+        'wxc-dialog': '../../packages/@minui/wxc-dialog/dist/index',
+        'wxc-toast': '../../packages/@minui/wxc-toast/dist/index'
+      }
     }
     data = {
-      id: 'fixingPassword',
-      type: 'fixingPassword',
-      isPassword: true,
-      isFocus: true,
-      placeholder: '请输入鞋垫密码'
+      familys: ['爸爸', '妈妈', '爷爷', '奶奶', '外公', '外婆', '哥哥', '姐姐', '叔叔', '阿姨', '手动输入'],
+      show: false
+    }
+    methods = {
+      onConfirm (e) {
+        console.log('点击了确认按钮', e)
+        if (!this.input['relation']) {
+          this.showToast()
+          return
+        }
+        this.hideDialog()
+      },
+      onCancel () {
+        console.log('点击了取消按钮')
+        this.hideDialog()
+      },
+      bindPickerChange (e) {
+        const fieldName = e.currentTarget.id
+        let index = Number.parseInt(e.detail.value)
+        let lastIndex = this.familys.length - 1
+        console.log('picker发送选择改变，携带值为', e, index, lastIndex)
+        if (index === lastIndex) {
+          this.showDialog()
+          return
+        }
+        this.input[fieldName] = this.familys[index]
+      }
     }
     onLoad(fixing) {
       this.input['fixingId'] = fixing.fixingIdCipher
+    }
+    showDialog() {
+      let dialogComponent = this.$wxpage.selectComponent('.wxc-dialog')
+      dialogComponent && dialogComponent.show()
+    }
+    hideDialog() {
+      let dialogComponent = this.$wxpage.selectComponent('.wxc-dialog')
+      dialogComponent && dialogComponent.hide()
+    }
+    showToast() {
+      this.show = true
+      setTimeout(_ => {
+        this.show = false
+        this.$apply()
+      }, 800)
     }
   }
 </script>

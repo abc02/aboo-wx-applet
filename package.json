@@ -1,5 +1,5 @@
 {
-  "name": "ABOO-wxApplet",
+  "name": "aboo-wx-applet",
   "version": "1.0.1",
   "description": "",
   "main": "dist/app.js",
@@ -13,6 +13,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@minui/wxc-dialog": "^1.0.8",
+    "@minui/wxc-toast": "^1.0.8",
     "buffer": "^5.0.8",
     "convert-string": "^0.1.0",
     "js-base64": "^2.4.0",

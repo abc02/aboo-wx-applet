@@ -21,13 +21,16 @@ export default class Fixing extends Wepy.mixin {
   // 鞋垫绑定api
   async AddBinding(fixing) {
     let res = await FixingService.AddBinding(this.JoinFixingRequest(fixing, 'fixingPassword'))
+    console.log(res)
     return res
   }
   // 请求地址获取鞋垫密文
   async GetFixingIdCipher(url) {
-    let userInfo = Wepy.$instance.GetUserInfo()
+    let userInfo = await Wepy.$instance.GetUserInfo()
+    // console.log(userInfo)
     // result & Ciphertext + UserId
     let urlCipher = `${url.result}&${userInfo.Ciphertext}&${userInfo.UserId}`
+    console.log(urlCipher)
     let fixingIdCipher = await Wepy.request({
       url: urlCipher,
       method: 'POST'
@@ -39,6 +42,7 @@ export default class Fixing extends Wepy.mixin {
     // 确认 -> 调用微信扫码api
     let url = await this.GetQRCode()
     // 请求地址 获取鞋垫id密文
+    // console.log(url)
     Tips.loading()
     let fixingIdCipher = await this.GetFixingIdCipher(url)
     Tips.loaded()
@@ -91,9 +95,11 @@ export default class Fixing extends Wepy.mixin {
   }
   // 获取鞋垫定位数据
   async GetLastPositionSmall(fixing) {
+    console.log(fixing)
     let FixingLocationInfo
     try {
       FixingLocationInfo = await FixingService.GetLastPositionSmall(this.JoinFixingRequest(fixing))
+      console.log(FixingLocationInfo)
       return await this.GetLastPositonResponse(FixingLocationInfo)
     } catch (err) {
       FixingLocationInfo = {ret: 1002}
@@ -122,6 +128,7 @@ export default class Fixing extends Wepy.mixin {
       case 1001: // 定位成功
         // 转换经纬度
         let TencentLocationInfo = await this.GetBaiduToTencentLocationInfo(res.data.Position)
+        console.log(TencentLocationInfo)
         return this.SetMarkers({message, iconPath: './assets/icon_gif_success.png'}, TencentLocationInfo.result, res.data)
       case 1002:// 定位失败
         return this.SetMarkers({message, iconPath: './assets/icon_gif_fail.png'})
@@ -130,8 +137,8 @@ export default class Fixing extends Wepy.mixin {
     }
   }
   SetMarkers(message, TencentLocationInfo = null, fixingInfo = null) {
-    let markers
-    this.markers ? markers = this.markers[0] : markers = {...this.locationInfo}
+    let oldMarkers
+    this.markers ? oldMarkers = this.markers[0] : oldMarkers = {...this.locationInfo}
     let res = {
       id: 0,
       iconPath: message.iconPath,
@@ -148,22 +155,36 @@ export default class Fixing extends Wepy.mixin {
       display: 'ALWAYS',
       textAlign: 'center'
     }
+    console.log('TencentLocationInfo', TencentLocationInfo)
+    console.log('fixingInfo', fixingInfo)
     if (TencentLocationInfo && fixingInfo) {
+      let { Battery, Charge, CreatTime, MachineCode, Mode, Position, Radius, Shutdown, State } = fixingInfo
+      let { location, address, formatted_addresses } = TencentLocationInfo
       res = {
         ...res,
-        latitude: TencentLocationInfo.location.lat,
-        longitude: TencentLocationInfo.location.lng,
-        ...TencentLocationInfo,
-        ...fixingInfo,
+        latitude: location.lat,
+        longitude: location.lng,
+        address,
+        formatted_addresses,
+        Battery,
+        Charge,
+        CreatTime,
+        MachineCode,
+        Mode,
+        Position,
+        Radius,
+        Shutdown,
+        State,
         callout
       }
     } else {
       res = {
-        ...markers,
+        ...oldMarkers,
         ...res,
         callout
       }
     }
+    console.log(res)
     return res
   }
   setCircles() {
