@@ -13,14 +13,21 @@ export default class Fixing extends Wepy.mixin {
     if (fixing) {
       data.fixingId = fixing.fixingId
     }
-    if (key) {
-      data[key] = fixing[key]
+    if (Array.isArray(key)) {
+      key.forEach(key => {
+        data[key] = fixing[key]
+      })
+    } else {
+      if (key) {
+        data[key] = fixing[key]
+      }
     }
+    console.log(data)
     return data
   }
   // 鞋垫绑定api
   async AddBinding(fixing) {
-    let res = await FixingService.AddBinding(this.JoinFixingRequest(fixing, 'fixingPassword'))
+    let res = await FixingService.AddBinding(this.JoinFixingRequest(fixing, ['fixingPassword', 'relation']))
     console.log(res)
     return res
   }
