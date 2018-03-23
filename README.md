@@ -5,4 +5,4 @@
 
 ### 扫码预览
 
-![image]('./qrcode.jpg')
+![image](./qrcode.jpg)
