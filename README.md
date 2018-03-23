@@ -1,4 +1,8 @@
 # aboo 小程序
 
-## 技术栈 wepy
-## UI组件 weui for wepy
+## 工具 wepy
+## 组件 weui for wepy
+
+### 扫码预览
+
+[]('./qrcode.jpg')
